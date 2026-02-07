@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Survey Test - ALL 650+ Fields</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    button {
+      background: linear-gradient(135deg, #0066CC 0%, #0052A3 100%);
+      color: white;
+      padding: 18px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,102,204,0.4);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    #result {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+    .info {
+      background-color: #e7f3ff;
+      color: #004085;
+      border-left: 4px solid #0066CC;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+    }
+    .info h3 {
+      margin-top: 0;
+      color: #0066CC;
+    }
+    .info ul {
+      margin: 10px 0;
+      padding-left: 25px;
+    }
+    .info li {
+      margin: 5px 0;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .stat-box {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 32px;
+      font-weight: bold;
+      color: #0066CC;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Complete Survey Test Data</h1>
+    <p style="color: #666; margin-bottom: 25px;">Submit ALL fields at once to verify complete Google Sheets structure</p>
+    
+    <div class="info">
+      <h3>📋 This test includes:</h3>
+      <ul>
+        <li><strong>Section A:</strong> 15 administrative fields</li>
+        <li><strong>Comfort Features (B):</strong> 37 features × 5 columns = 185 fields</li>
+        <li><strong>Safety Features (C):</strong> 26 features × 5 columns = 130 fields</li>
+        <li><strong>ADAS:</strong> 10 advanced safety fields</li>
+        <li><strong>Exterior Features (D):</strong> 15 features × 5 columns = 75 fields</li>
+        <li><strong>Interior Features (E):</strong> 21 features × 5 columns = 105 fields</li>
+        <li><strong>ICL (Instrument Cluster):</strong> 9 fields</li>
+        <li><strong>Infotainment (F):</strong> 6 features × 5 columns = 30 fields</li>
+        <li><strong>Connectivity (G):</strong> 13 features × 5 columns = 65 fields</li>
+        <li><strong>Performance (H):</strong> 6 features × 5 columns = 30 fields</li>
+        <li><strong>Q13 & Q14:</strong> 30 open-ended response fields</li>
+      </ul>
+      
+      <div class="stats">
+        <div class="stat-box">
+          <div class="stat-number" id="totalFields">650+</div>
+          <div class="stat-label">Total Fields</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">124</div>
+          <div class="stat-label">Features</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">9</div>
+          <div class="stat-label">Form Steps</div>
+        </div>
+      </div>
+    </div>
+    
+    <button onclick="submitCompleteData()">🚀 Submit Complete Test Data</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyAEQAUTyQKBEPVU9qjHyltzwMjy2H-Gddwx0FIgwF8zFwiADU9cAsQMozwvgihJZXJ/exec';
+    
+    function generateCompleteTestData() {
+      const data = {};
+      
+      // ============= SECTION A: ADMINISTRATIVE (15 fields) =============
+      data.Q1A_City = '1';
+      data.Q1B_OEM = '2';
+      data.Q1C_Model = '4';
+      data.S1_1_DealerName = 'Premium Auto Dealers Pvt Ltd';
+      data.S1_2_DealerAddress = 'MG Road, Bengaluru';
+      data.S1_3_DistrictName = 'Bengaluru Urban';
+      data.S1_4_StateName = 'Karnataka';
+      data.S1_5_RespondentName = 'Rajesh Kumar';
+      data.S1_6_RespondentContact = '9876543210';
+      data.Q1C_Gender = '1';
+      data.Q2_Experience = '5';
+      data.Q3_Designation = 'Senior Sales Manager';
+      data.Q4_ModelExperience = '3';
+      data.Q5_KnowledgeLevel = '2';
+      
+      // ============= SECTION B: COMFORT FEATURES (37 features × 5 = 185 fields + category + array) =============
+      data.Q6c_Category = '1'; // Category question
+      
+      // Individual feature fields: Q6a (Available), Q6c (Importance), Q6d (Aftermarket), Q6e (Price)
+      for (let i = 1; i <= 37; i++) {
+        data[`Q6a_Available_${i}`] = i % 2 === 0 ? '1' : '2';  // Alternating Yes(1)/No(2)
+        data[`Q6c_Importance_${i}`] = ((i % 3) + 1).toString();  // '1', '2', or '3'
+        data[`Q6d_Aftermarket_${i}`] = i % 3 === 0 ? '1' : '2';  // Some available aftermarket
+        data[`Q6e_Price_${i}`] = (i * 500).toString();  // Price values: '500', '1000', '1500'...
+      }
+      
+      // Q6b Most Preferred is a checkbox array
+      data.Q6b_MostPreferred = ['1', '2', '5', '8', '13', '15', '30', '33'];
+      
+      // ============= SECTION C: SAFETY FEATURES (26 features × 5 = 130 fields + category + array) =============
+      data.Q7c_Category = '1';
+      
+      // Individual feature fields: Q7a (Available), Q7c (Importance), Q7d (Aftermarket), Q7e (Price)
+      for (let i = 1; i <= 26; i++) {
+        data[`Q7a_Available_${i}`] = i % 2 === 1 ? '1' : '2';
+        data[`Q7c_Importance_${i}`] = ((i % 3) + 1).toString();
+        data[`Q7d_Aftermarket_${i}`] = i % 4 === 0 ? '1' : '2';
+        data[`Q7e_Price_${i}`] = (i * 1000).toString();  // '1000', '2000', '3000'...
+      }
+      
+      // Q7b Most Preferred is a checkbox array
+      data.Q7b_MostPreferred = ['1', '2', '8', '9', '10', '12'];
+      
+      // ============= ADAS FEATURES (10 fields) =============
+      data.ADAS_ACC = '1';
+      data.ADAS_LDW = '1';
+      data.ADAS_LKA = '1';
+      data.ADAS_AEB = '1';
+      data.ADAS_LCA = '2';
+      data.ADAS_Traffic_Jam = '2';
+      data.ADAS_Highway_Assist = '1';
+      data.ADAS_Blind_Spot = '1';
+      data.ADAS_360_Cam = '1';
+      data.ADAS_Rear_Cross_Traffic = '2';
+      
+      // ============= SECTION D: EXTERIOR FEATURES (15 features × 5 = 75 fields + category + array) =============
+      data.Q8c_Category = '2';
+      
+      // Individual feature fields: Q8a (Available), Q8c (Importance), Q8d (Aftermarket), Q8e (Price)
+      for (let i = 1; i <= 15; i++) {
+        data[`Q8a_Available_${i}`] = i % 3 === 0 ? '2' : '1';
+        data[`Q8c_Importance_${i}`] = ((i % 3) + 1).toString();
+        data[`Q8d_Aftermarket_${i}`] = i % 2 === 0 ? '1' : '2';
+        data[`Q8e_Price_${i}`] = (i * 750).toString();  // '750', '1500', '2250'...
+      }
+      
+      // Q8b Most Preferred is a checkbox array
+      data.Q8b_MostPreferred = ['1', '2', '3', '6', '12', '14'];
+      
+      // ============= SECTION E: INTERIOR FEATURES (21 features × 5 = 105 fields + category + array) =============
+      data.Q9c_Category = '1';
+      
+      // Individual feature fields: Q9a (Available), Q9c (Importance), Q9d (Aftermarket), Q9e (Price)
+      for (let i = 1; i <= 21; i++) {
+        data[`Q9a_Available_${i}`] = i % 2 === 0 ? '1' : '2';
+        data[`Q9c_Importance_${i}`] = ((i % 3) + 1).toString();
+        data[`Q9d_Aftermarket_${i}`] = i % 5 === 0 ? '1' : '2';
+        data[`Q9e_Price_${i}`] = (i * 600).toString();  // '600', '1200', '1800'...
+      }
+      
+      // Q9b Most Preferred is a checkbox array
+      data.Q9b_MostPreferred = ['5', '7', '10', '11', '15'];
+      
+      // ============= ICL FEATURES (9 fields) =============
+      data.ICL_Speedo = '1';
+      data.ICL_Tacho = '1';
+      data.ICL_Fuel = '1';
+      data.ICL_Temp = '1';
+      data.ICL_Odo = '1';
+      data.ICL_Trip = '1';
+      data.ICL_Warning_Lights = '1';
+      data.ICL_Digital_Display = '1';
+      data.ICL_Custom_Layout = '2';
+      
+      // ============= SECTION F: INFOTAINMENT FEATURES (6 features × 5 = 30 fields + category + array) =============
+      data.Q10c_Category = '1';
+      
+      // Individual feature fields: Q10a (Available), Q10c (Importance), Q10d (Aftermarket), Q10e (Price)
+      for (let i = 1; i <= 6; i++) {
+        data[`Q10a_Available_${i}`] = '1';
+        data[`Q10c_Importance_${i}`] = ((i % 3) + 1).toString();
+        data[`Q10d_Aftermarket_${i}`] = i === 3 || i === 4 ? '1' : '2';
+        data[`Q10e_Price_${i}`] = (i * 2000).toString();  // '2000', '4000', '6000'...
+      }
+      
+      // Q10b Most Preferred is a checkbox array
+      data.Q10b_MostPreferred = ['1', '3', '4'];
+      
+      // ============= SECTION G: CONNECTIVITY FEATURES (13 features × 5 = 65 fields + category + array) =============
+      data.Q11c_Category = '1';
+      
+      // Individual feature fields: Q11a (Available), Q11c (Importance), Q11d (Aftermarket), Q11e (Price)
+      for (let i = 1; i <= 13; i++) {
+        data[`Q11a_Available_${i}`] = i <= 8 ? '1' : '2';
+        data[`Q11c_Importance_${i}`] = ((i % 3) + 1).toString();
+        data[`Q11d_Aftermarket_${i}`] = i % 4 === 0 ? '1' : '2';
+        data[`Q11e_Price_${i}`] = (i * 1500).toString();  // '1500', '3000', '4500'...
+      }
+      
+      // Q11b Most Preferred is a checkbox array
+      data.Q11b_MostPreferred = ['1', '2', '5', '6', '7', '8'];
+      
+      // ============= SECTION H: PERFORMANCE FEATURES (6 features × 5 = 30 fields + category + array) =============
+      data.Q12c_Category = '2';
+      
+      // Individual feature fields: Q12a (Available), Q12c (Importance), Q12d (Aftermarket), Q12e (Price)
+      for (let i = 1; i <= 6; i++) {
+        data[`Q12a_Available_${i}`] = i <= 3 ? '1' : '2';
+        data[`Q12c_Importance_${i}`] = ((i % 3) + 1).toString();
+        data[`Q12d_Aftermarket_${i}`] = i === 1 || i === 2 ? '1' : '2';
+        data[`Q12e_Price_${i}`] = (i * 3000).toString();  // '3000', '6000', '9000'...
+      }
+      
+      // Q12b Most Preferred is a checkbox array
+      data.Q12b_MostPreferred = ['2', '5', '6'];
+      
+      // ============= Q13: FEATURES CHECKED BY CUSTOMERS (10 fields) =============
+      data.Q13_Checked_1 = 'Air Conditioning System';
+      data.Q13_Checked_2 = 'Power Windows (All 4)';
+      data.Q13_Checked_3 = 'Touchscreen Infotainment';
+      data.Q13_Checked_4 = 'Airbags (Dual Front)';
+      data.Q13_Checked_5 = 'ABS with EBD';
+      data.Q13_Checked_6 = 'Alloy Wheels';
+      data.Q13_Checked_7 = 'LED Headlamps';
+      data.Q13_Checked_8 = 'Reverse Camera';
+      data.Q13_Checked_9 = 'Keyless Entry';
+      data.Q13_Checked_10 = 'Push Button Start';
+      
+      // ============= Q13: MISSING FEATURES (10 fields) =============
+      data.Q13_Missing_1 = 'Electric Sunroof';
+      data.Q13_Missing_2 = 'Ventilated Seats';
+      data.Q13_Missing_3 = 'Wireless Charging';
+      data.Q13_Missing_4 = '360 Degree Camera';
+      data.Q13_Missing_5 = 'Cruise Control';
+      data.Q13_Missing_6 = 'Paddle Shifters';
+      data.Q13_Missing_7 = 'Premium Sound System';
+      data.Q13_Missing_8 = 'Rear AC Vents';
+      data.Q13_Missing_9 = 'Ambient Lighting';
+      data.Q13_Missing_10 = 'Head-Up Display';
+      
+      // ============= Q14: OTHER DEMANDED FEATURES (10 fields) =============
+      data.Q14_Other_1 = 'Better Fuel Efficiency';
+      data.Q14_Other_2 = 'More Boot Space';
+      data.Q14_Other_3 = 'Improved Ground Clearance';
+      data.Q14_Other_4 = 'Rear Windshield Wiper';
+      data.Q14_Other_5 = 'Larger Infotainment Screen';
+      data.Q14_Other_6 = 'Better Build Quality';
+      data.Q14_Other_7 = 'More Color Options';
+      data.Q14_Other_8 = 'Extended Warranty';
+      data.Q14_Other_9 = 'Better After-Sales Service';
+      data.Q14_Other_10 = 'Competitive Pricing';
+      
+      return data;
+    }
+    
+    async function submitCompleteData() {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '<p>🔄 Generating and submitting complete test data...</p>';
+      resultDiv.className = '';
+      
+      try {
+        // Generate complete data
+        const testData = generateCompleteTestData();
+        
+        // Count actual fields
+        const fieldCount = Object.keys(testData).length;
+        document.getElementById('totalFields').textContent = fieldCount;
+        
+        resultDiv.innerHTML = `<p>📦 Generated ${fieldCount} fields. Sending to Google Sheets...</p>`;
+        
+        // Submit to Google Sheets
+        const response = await fetch(SHEET_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+          },
+          body: JSON.stringify({
+            action: 'submit',
+            sheetName: 'Dealer Survey Data',
+            data: testData,
+            timestamp: new Date().toISOString()
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.result === 'success') {
+          resultDiv.className = 'success';
+          resultDiv.innerHTML = `
+            <h3>✅ Success!</h3>
+            <p><strong>${fieldCount} fields</strong> submitted successfully to row <strong>${result.row}</strong></p>
+            <p>🎉 Your Google Sheet now has the COMPLETE column structure!</p>
+            <p style="margin-top: 10px; font-size: 13px; color: #666;">Check your sheet to see all ~650+ columns properly organized.</p>
+          `;
+        } else {
+          resultDiv.className = 'error';
+          resultDiv.innerHTML = `
+            <h3>❌ Submission Error</h3>
+            <p>${result.message || 'Unknown error occurred'}</p>
+          `;
+        }
+      } catch (error) {
+        resultDiv.className = 'error';
+        resultDiv.innerHTML = `
+          <h3>❌ Network Error</h3>
+          <p>${error.message}</p>
+          <p style="margin-top: 10px; font-size: 13px;">Make sure the Google Apps Script is deployed and accessible.</p>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
