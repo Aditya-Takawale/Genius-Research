@@ -330,21 +330,136 @@ function generateFeatureHeaders() {
   return headers;
 }
 
+// Map header name to form field name
+function getFormFieldName(header) {
+  // Administrative fields - direct mapping
+  var directFields = {
+    'Q1A_City': 'Q1A_City',
+    'Q1B_OEM': 'Q1B_OEM',
+    'Q1C_Model': 'Q1C_Model',
+    'S1_1_DealerName': 'S1_1_DealerName',
+    'S1_2_DealerAddress': 'S1_2_DealerAddress',
+    'S1_3_DistrictName': 'S1_3_DistrictName',
+    'S1_4_StateName': 'S1_4_StateName',
+    'S1_5_RespondentName': 'S1_5_RespondentName',
+    'S1_6_RespondentContact': 'S1_6_RespondentContact',
+    'Q1C_Gender': 'Q1C_Gender',
+    'Q2_Experience': 'Q2_Experience',
+    'Q3_Designation': 'Q3_Designation',
+    'Q4_VehicleModelsDealt': 'Q4_VehicleModelsDealt',
+    'Q5_FeatureKnowledgeLevel': 'Q5_FeatureKnowledgeLevel',
+    'filledForms_URLs': 'filledForms_URLs',
+    'brochures_URLs': 'brochures_URLs'
+  };
+  
+  if (directFields[header]) {
+    return directFields[header];
+  }
+  
+  // Feature columns: Parse header pattern like "Q6a.1 Drive mode... OEM..."
+  // Patterns:
+  // Q6a.1 ... OEM -> Q6a_Available_1
+  // Q6b.1 ... MOST PREFERRED -> Q6b_MostPreferred (checkbox array)
+  // Q6c.1 ... IMPORTANT -> Q6c_Importance_1
+  // Q6d.1 ... AVAILABLE AFTERMARKET -> Q6d_Aftermarket_1
+  // Q6e.1 ... After Market Price -> Q6e_Price_1
+  // Q7f.1 Adaptive Cruise Control -> ADAS_ACC (uses feature.code)
+  // Q9f.1 Speedometer -> ICL_Speedo (uses feature.code)
+  // Q13.1 Missing Features -> Q13_Missing_1
+  // Q14.1 Other Desired Features -> Q14_Other_1
+  
+  // Match patterns like Q6a.1, Q7b.12, Q10c.3, etc.
+  var match = header.match(/^(Q\d+[a-f]?)\.(\d+)/);
+  if (match) {
+    var questionCode = match[1]; // e.g., Q6a, Q7f, Q10c
+    var featureNum = match[2];   // e.g., 1, 12, 3
+    
+    // Determine field type based on letter suffix
+    var letterMatch = questionCode.match(/Q(\d+)([a-f])?/);
+    if (letterMatch) {
+      var sectionNum = letterMatch[1];
+      var letterSuffix = letterMatch[2] || '';
+      
+      // Handle special sections (Q13, Q14 - text fields)
+      if (sectionNum === '13') {
+        return 'Q13_Missing_' + featureNum;
+      }
+      if (sectionNum === '14') {
+        return 'Q14_Other_' + featureNum;
+      }
+      
+      // Handle Q7f (ADAS) - map feature number to actual form field code
+      if (questionCode === 'Q7f') {
+        var adasCodes = [
+          'ADAS_ACC', 'ADAS_LDW', 'ADAS_LKA', 'ADAS_AEB',  // Level 1 (1-4)
+          'ADAS_LCA', 'ADAS_Traffic_Jam', 'ADAS_Highway_Assist', 'ADAS_Blind_Spot', 'ADAS_360_Cam', 'ADAS_Rear_Cross_Traffic'  // Level 2 (5-10)
+        ];
+        var adasIndex = parseInt(featureNum) - 1;
+        if (adasIndex >= 0 && adasIndex < adasCodes.length) {
+          return adasCodes[adasIndex];
+        }
+        return null;
+      }
+      
+      // Handle Q9f (ICL) - map feature number to actual form field code
+      if (questionCode === 'Q9f') {
+        var iclCodes = [
+          'ICL_Speedo', 'ICL_Tacho', 'ICL_Fuel', 'ICL_Temp', 'ICL_Odo',
+          'ICL_Trip', 'ICL_Warning_Lights', 'ICL_Digital_Display', 'ICL_Custom_Layout'
+        ];
+        var iclIndex = parseInt(featureNum) - 1;
+        if (iclIndex >= 0 && iclIndex < iclCodes.length) {
+          return iclCodes[iclIndex];
+        }
+        return null;
+      }
+      
+      // Standard feature columns (a, b, c, d, e)
+      switch (letterSuffix) {
+        case 'a':
+          return 'Q' + sectionNum + 'a_Available_' + featureNum;
+        case 'b':
+          // b columns are checkboxes - return special marker
+          return 'CHECKBOX_Q' + sectionNum + 'b_MostPreferred_' + featureNum;
+        case 'c':
+          return 'Q' + sectionNum + 'c_Importance_' + featureNum;
+        case 'd':
+          return 'Q' + sectionNum + 'd_Aftermarket_' + featureNum;
+        case 'e':
+          return 'Q' + sectionNum + 'e_Price_' + featureNum;
+        default:
+          return null;
+      }
+    }
+  }
+  
+  return null;
+}
+
 function buildProperRow(data, timestamp, sheet) {
   function get(key) {
     var val = data[key];
     if (val === null || val === undefined) return '';
-    // Don't store the actual file data arrays (filledForms, brochures) - only store URLs
     if (key === 'filledForms' || key === 'brochures') return '';
     if (Array.isArray(val)) return val.join(', ');
     if (typeof val === 'object') return JSON.stringify(val);
-    
-    // Store raw numerical values directly (no visual conversion)
-    // Form coding: Yes=1, No=2, Most Important=1, Good to Have=2, Not Important=3
     return val;
   }
   
-  // Build row based on existing headers in the sheet
+  // Check if a feature number is in a checkbox array
+  function isInCheckboxArray(arrayName, featureNum) {
+    var arr = data[arrayName];
+    if (!arr) return '2'; // Not checked = 2 (No)
+    if (typeof arr === 'string') {
+      // Single value
+      return arr === featureNum.toString() ? '1' : '2';
+    }
+    if (Array.isArray(arr)) {
+      return arr.includes(featureNum.toString()) || arr.includes(featureNum) ? '1' : '2';
+    }
+    return '2';
+  }
+  
   var lastCol = sheet.getLastColumn();
   var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
   var row = [];
@@ -355,7 +470,28 @@ function buildProperRow(data, timestamp, sheet) {
     } else if (header === 'Timestamp') {
       row.push(timestamp || new Date().toISOString());
     } else {
-      row.push(get(header));
+      var formField = getFormFieldName(header);
+      
+      if (formField) {
+        // Check if it's a checkbox field
+        if (formField.startsWith('CHECKBOX_')) {
+          // Parse: CHECKBOX_Q6b_MostPreferred_1
+          var parts = formField.replace('CHECKBOX_', '').split('_');
+          var sectionMatch = parts[0].match(/Q(\d+)b/);
+          if (sectionMatch) {
+            var sectionNum = sectionMatch[1];
+            var featureNum = parts[2];
+            var arrayName = 'Q' + sectionNum + 'b_MostPreferred';
+            row.push(isInCheckboxArray(arrayName, featureNum));
+          } else {
+            row.push('');
+          }
+        } else {
+          row.push(get(formField));
+        }
+      } else {
+        row.push('');
+      }
     }
   });
   

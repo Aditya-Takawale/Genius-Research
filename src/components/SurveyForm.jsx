@@ -14,6 +14,7 @@ import TerminationScreen from './TerminationScreen';
 import SuccessScreen from './SuccessScreen';
 import { saveSurveyDraft, getSurveyDraft, clearSurveyDraft, saveCurrentStep, getCurrentStep } from '../utils/storage';
 import { submitToGoogleSheets, queueOfflineSubmission } from '../utils/sheetService';
+import { generateDeterministicTestData, applyTestDataToForm } from '../utils/testFormData';
 
 const SurveyForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -98,6 +99,38 @@ const SurveyForm = () => {
     setCurrentStep(prev => Math.max(prev - 1, 0));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Hidden test data fill (Ctrl+Shift+T) - for testing only
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Ctrl+Shift+T to fill test data
+      if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+        e.preventDefault();
+        const testData = generateDeterministicTestData();
+        applyTestDataToForm(setValue, testData);
+        alert('✅ Test data filled!\n\nNavigate through all steps and submit to test.\n\nShortcut: Ctrl+Shift+T');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [setValue]);
+
+  // Hidden test data fill (Ctrl+Shift+T)
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Ctrl+Shift+T to fill test data
+      if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+        e.preventDefault();
+        const testData = generateDeterministicTestData();
+        applyTestDataToForm(setValue, testData);
+        alert('✅ Test data filled! Press Ctrl+Shift+T to use this feature.\n\nNavigate through all steps and submit to test.');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [setValue]);
 
   // Prevent accidental form submission on Enter key
   const handleKeyDown = (e) => {
