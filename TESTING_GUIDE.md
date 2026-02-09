@@ -7,7 +7,7 @@ The form includes a **hidden keyboard shortcut** to fill all fields with test da
 ### How to Use
 
 1. **Open the survey form** on any device
-2. **Press** `Ctrl + Shift + T` (Windows/Linux) or `Cmd + Shift + T` (Mac)
+2. **Press** `Ctrl + Shift + F` (Windows/Linux) or `Cmd + Shift + F` (Mac)
 3. **See confirmation** - "✅ Test data filled!"
 4. **Navigate** through all 9 steps using "Next" button
 5. **Submit** the form on the final step
@@ -31,7 +31,7 @@ The test data includes:
 ### Testing Checklist
 
 - [ ] **Connection Test**: Use Config panel to test Sheet & Drive connections
-- [ ] **Fill Test Data**: Press Ctrl+Shift+T
+- [ ] **Fill Test Data**: Press Ctrl+Shift+F
 - [ ] **Navigate**: Go through all 9 steps
 - [ ] **Validation**: Try clicking "Next" without required fields (should block)
 - [ ] **Submit**: Complete the form
@@ -59,7 +59,7 @@ The test data includes:
 3. Check Apps Script execution logs for mapping issues
 
 ### "Test data doesn't fill"
-1. Make sure you're pressing Ctrl+Shift+T (not just Ctrl+T)
+1. Make sure you're pressing Ctrl+Shift+F (not other combinations)
 2. Try refreshing the page
 3. Check browser console for JavaScript errors
 
@@ -84,4 +84,4 @@ The test data includes:
 
 ---
 
-💡 **Tip**: Keep this guide handy for testing after any form updates.
+💡 **Tip**: Press `Ctrl+Shift+F` to fill test data instantly. Keep this guide handy for testing after any form updates.

@@ -100,15 +100,15 @@ const SurveyForm = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Hidden test data fill (Ctrl+Shift+T) - for testing only
+  // Hidden test data fill (Ctrl+Shift+F) - for testing only
   useEffect(() => {
     const handleKeyPress = (e) => {
-      // Ctrl+Shift+T to fill test data
-      if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+      // Ctrl+Shift+F to fill test data
+      if (e.ctrlKey && e.shiftKey && e.key === 'F') {
         e.preventDefault();
         const testData = generateDeterministicTestData();
         applyTestDataToForm(setValue, testData);
-        alert('✅ Test data filled!\n\nNavigate through all steps and submit to test.\n\nShortcut: Ctrl+Shift+T');
+        alert('✅ Test data filled!\n\nNavigate through all steps and submit to test.\n\nShortcut: Ctrl+Shift+F');
       }
     };
 
