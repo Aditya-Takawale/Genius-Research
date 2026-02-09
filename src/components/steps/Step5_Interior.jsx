@@ -164,14 +164,14 @@ const Step5_Interior = ({ register, errors }) => {
                 {/* Feature Description */}
                 <td className="border border-gray-400 px-3 py-2">{feature.name}</td>
                 
-                {/* Q9a: Available (Yes=1, No=2) */}
+                {/* Q9a: Available (Yes=1, No=2) - REQUIRED */}
                 <td className="border border-gray-400 px-2 py-2 text-center">
                   <div className="flex justify-center gap-4">
                     <label className="flex items-center gap-1">
                       <input
                         type="radio"
                         value="1"
-                        {...register(`Q9a_Available_${feature.id}`)}
+                        {...register(`Q9a_Available_${feature.id}`, { required: true })}
                         className="w-4 h-4"
                       />
                       <span>Yes</span>
@@ -180,12 +180,13 @@ const Step5_Interior = ({ register, errors }) => {
                       <input
                         type="radio"
                         value="2"
-                        {...register(`Q9a_Available_${feature.id}`)}
+                        {...register(`Q9a_Available_${feature.id}`, { required: true })}
                         className="w-4 h-4"
                       />
                       <span>No</span>
                     </label>
                   </div>
+                  {errors[`Q9a_Available_${feature.id}`] && <span className="text-red-500 text-[10px]">Required</span>}
                 </td>
                 
                 {/* Q9b: Most Preferred (Checkbox) */}
@@ -198,14 +199,14 @@ const Step5_Interior = ({ register, errors }) => {
                   />
                 </td>
                 
-                {/* Q9c: Importance (1/2/3) */}
+                {/* Q9c: Importance (1/2/3) - REQUIRED */}
                 <td className="border border-gray-400 px-2 py-2 text-center">
                   <div className="flex justify-center gap-2">
                     <label className="flex items-center gap-1">
                       <input
                         type="radio"
                         value="1"
-                        {...register(`Q9c_Importance_${feature.id}`)}
+                        {...register(`Q9c_Importance_${feature.id}`, { required: true })}
                         className="w-4 h-4"
                       />
                       <span>1</span>
@@ -214,7 +215,7 @@ const Step5_Interior = ({ register, errors }) => {
                       <input
                         type="radio"
                         value="2"
-                        {...register(`Q9c_Importance_${feature.id}`)}
+                        {...register(`Q9c_Importance_${feature.id}`, { required: true })}
                         className="w-4 h-4"
                       />
                       <span>2</span>
@@ -223,22 +224,23 @@ const Step5_Interior = ({ register, errors }) => {
                       <input
                         type="radio"
                         value="3"
-                        {...register(`Q9c_Importance_${feature.id}`)}
+                        {...register(`Q9c_Importance_${feature.id}`, { required: true })}
                         className="w-4 h-4"
                       />
                       <span>3</span>
                     </label>
                   </div>
+                  {errors[`Q9c_Importance_${feature.id}`] && <span className="text-red-500 text-[10px]">Required</span>}
                 </td>
                 
-                {/* Q9d: Aftermarket (Yes=1, No=2) */}
+                {/* Q9d: Aftermarket (Yes=1, No=2) - REQUIRED */}
                 <td className="border border-gray-400 px-2 py-2 text-center">
                   <div className="flex justify-center gap-4">
                     <label className="flex items-center gap-1">
                       <input
                         type="radio"
                         value="1"
-                        {...register(`Q9d_Aftermarket_${feature.id}`)}
+                        {...register(`Q9d_Aftermarket_${feature.id}`, { required: true })}
                         className="w-4 h-4"
                       />
                       <span>Yes</span>
@@ -247,12 +249,13 @@ const Step5_Interior = ({ register, errors }) => {
                       <input
                         type="radio"
                         value="2"
-                        {...register(`Q9d_Aftermarket_${feature.id}`)}
+                        {...register(`Q9d_Aftermarket_${feature.id}`, { required: true })}
                         className="w-4 h-4"
                       />
                       <span>No</span>
                     </label>
                   </div>
+                  {errors[`Q9d_Aftermarket_${feature.id}`] && <span className="text-red-500 text-[10px]">Required</span>}
                 </td>
                 
                 {/* Q9e: Price (Text Input) */}
@@ -303,7 +306,7 @@ const Step5_Interior = ({ register, errors }) => {
                         <input
                           type="radio"
                           value="1"
-                          {...register(`${feature.code}`)}
+                          {...register(`${feature.code}`, { required: true })}
                           className="w-4 h-4"
                         />
                         <span>Yes</span>
@@ -312,12 +315,13 @@ const Step5_Interior = ({ register, errors }) => {
                         <input
                           type="radio"
                           value="2"
-                          {...register(`${feature.code}`)}
+                          {...register(`${feature.code}`, { required: true })}
                           className="w-4 h-4"
                         />
                         <span>No</span>
                       </label>
                     </div>
+                    {errors[feature.code] && <span className="text-red-500 text-[10px]">Required</span>}
                   </td>
                 </tr>
               ))}

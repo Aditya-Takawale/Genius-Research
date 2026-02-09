@@ -105,14 +105,14 @@ const Step3_Safety = ({ register, errors }) => {
                 {/* Feature Description */}
                 <td className="border border-gray-400 px-3 py-2">{feature.name}</td>
                 
-                {/* Q7a - Available (Yes/No Radio) */}
+                {/* Q7a - Available (Yes/No Radio) - REQUIRED */}
                 <td className="border border-gray-400 px-2 py-2 text-center">
                   <div className="flex justify-center gap-3">
                     <label className="flex items-center gap-1 cursor-pointer">
                       <input
                         type="radio"
                         value="1"
-                        {...register(`Q7a_Available_${feature.id}`)}
+                        {...register(`Q7a_Available_${feature.id}`, { required: true })}
                         className="w-3 h-3 text-blue-600"
                       />
                       <span className="text-xs">Yes</span>
@@ -121,12 +121,13 @@ const Step3_Safety = ({ register, errors }) => {
                       <input
                         type="radio"
                         value="2"
-                        {...register(`Q7a_Available_${feature.id}`)}
+                        {...register(`Q7a_Available_${feature.id}`, { required: true })}
                         className="w-3 h-3 text-blue-600"
                       />
                       <span className="text-xs">No</span>
                     </label>
                   </div>
+                  {errors[`Q7a_Available_${feature.id}`] && <span className="text-red-500 text-[10px]">Required</span>}
                 </td>
                 
                 {/* Q7b - Most Preferred (Checkbox) */}
@@ -139,14 +140,14 @@ const Step3_Safety = ({ register, errors }) => {
                   />
                 </td>
                 
-                {/* Q7c - Importance (1, 2, or 3) */}
+                {/* Q7c - Importance (1, 2, or 3) - REQUIRED */}
                 <td className="border border-gray-400 px-2 py-2 text-center">
                   <div className="flex justify-center gap-2">
                     <label className="flex items-center gap-1 cursor-pointer">
                       <input
                         type="radio"
                         value="1"
-                        {...register(`Q7c_Importance_${feature.id}`)}
+                        {...register(`Q7c_Importance_${feature.id}`, { required: true })}
                         className="w-3 h-3 text-blue-600"
                       />
                       <span className="text-xs">1</span>
@@ -155,7 +156,7 @@ const Step3_Safety = ({ register, errors }) => {
                       <input
                         type="radio"
                         value="2"
-                        {...register(`Q7c_Importance_${feature.id}`)}
+                        {...register(`Q7c_Importance_${feature.id}`, { required: true })}
                         className="w-3 h-3 text-blue-600"
                       />
                       <span className="text-xs">2</span>
@@ -164,22 +165,23 @@ const Step3_Safety = ({ register, errors }) => {
                       <input
                         type="radio"
                         value="3"
-                        {...register(`Q7c_Importance_${feature.id}`)}
+                        {...register(`Q7c_Importance_${feature.id}`, { required: true })}
                         className="w-3 h-3 text-blue-600"
                       />
                       <span className="text-xs">3</span>
                     </label>
                   </div>
+                  {errors[`Q7c_Importance_${feature.id}`] && <span className="text-red-500 text-[10px]">Required</span>}
                 </td>
                 
-                {/* Q7d - Aftermarket Available (Yes/No Radio) */}
+                {/* Q7d - Aftermarket Available (Yes/No Radio) - REQUIRED */}
                 <td className="border border-gray-400 px-2 py-2 text-center">
                   <div className="flex justify-center gap-3">
                     <label className="flex items-center gap-1 cursor-pointer">
                       <input
                         type="radio"
                         value="1"
-                        {...register(`Q7d_Aftermarket_${feature.id}`)}
+                        {...register(`Q7d_Aftermarket_${feature.id}`, { required: true })}
                         className="w-3 h-3 text-blue-600"
                       />
                       <span className="text-xs">Yes</span>
@@ -188,12 +190,13 @@ const Step3_Safety = ({ register, errors }) => {
                       <input
                         type="radio"
                         value="2"
-                        {...register(`Q7d_Aftermarket_${feature.id}`)}
+                        {...register(`Q7d_Aftermarket_${feature.id}`, { required: true })}
                         className="w-3 h-3 text-blue-600"
                       />
                       <span className="text-xs">No</span>
                     </label>
                   </div>
+                  {errors[`Q7d_Aftermarket_${feature.id}`] && <span className="text-red-500 text-[10px]">Required</span>}
                 </td>
                 
                 {/* Q7e - Aftermarket Price */}
@@ -237,7 +240,7 @@ const Step3_Safety = ({ register, errors }) => {
                         <input
                           type="radio"
                           value="1"
-                          {...register(`${feature.code}`)}
+                          {...register(`${feature.code}`, { required: true })}
                           className="w-3 h-3 text-blue-600"
                         />
                         <span className="text-xs">Yes</span>
@@ -246,12 +249,13 @@ const Step3_Safety = ({ register, errors }) => {
                         <input
                           type="radio"
                           value="2"
-                          {...register(`${feature.code}`)}
+                          {...register(`${feature.code}`, { required: true })}
                           className="w-3 h-3 text-blue-600"
                         />
                         <span className="text-xs">No</span>
                       </label>
                     </div>
+                    {errors[feature.code] && <span className="text-red-500 text-[10px]">Required</span>}
                   </td>
                 </tr>
               ))}
@@ -278,7 +282,7 @@ const Step3_Safety = ({ register, errors }) => {
                         <input
                           type="radio"
                           value="1"
-                          {...register(`${feature.code}`)}
+                          {...register(`${feature.code}`, { required: true })}
                           className="w-3 h-3 text-blue-600"
                         />
                         <span className="text-xs">Yes</span>
@@ -287,12 +291,13 @@ const Step3_Safety = ({ register, errors }) => {
                         <input
                           type="radio"
                           value="2"
-                          {...register(`${feature.code}`)}
+                          {...register(`${feature.code}`, { required: true })}
                           className="w-3 h-3 text-blue-600"
                         />
                         <span className="text-xs">No</span>
                       </label>
                     </div>
+                    {errors[feature.code] && <span className="text-red-500 text-[10px]">Required</span>}
                   </td>
                 </tr>
               ))}
