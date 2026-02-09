@@ -16,7 +16,7 @@ export function generateTestFormData() {
   testData.S1_6_RespondentContact = '9876543210';
   testData.Q1C_Gender = '1'; // Male
   testData.Q2_Experience = '5'; // 5 years
-  testData.Q3_Designation = '2'; // Sales Executive
+  testData.Q3_Designation = 'Senior Sales Manager'; // Text field
   testData.Q4_VehicleModelsDealt = '3'; // 3 models
   testData.Q5_FeatureKnowledgeLevel = '4'; // Very Good
 
