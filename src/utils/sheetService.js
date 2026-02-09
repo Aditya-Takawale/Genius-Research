@@ -35,8 +35,47 @@ export const testSheetConnection = async (url) => {
   }
 };
 
+// Test Google Drive folder connection
+export const testDriveConnection = async (url, folderId) => {
+  if (!folderId || !folderId.trim()) {
+    throw new Error('Please provide a valid Drive Folder ID');
+  }
+
+  if (!url || !url.trim()) {
+    throw new Error('Please configure Google Sheets URL first');
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+      },
+      body: JSON.stringify({ action: 'testDrive', folderId: folderId })
+    });
+
+    const data = await response.json();
+
+    if (data && data.result === 'success') {
+      return {
+        success: true,
+        folderName: data.folderName,
+        message: data.message
+      };
+    } else {
+      throw new Error(data.error || 'Invalid response from Google Drive');
+    }
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+      throw new Error('❌ Connection failed. Please check your internet connection.');
+    }
+    throw new Error(error.message || 'Failed to connect to Google Drive');
+  }
+};
+
 // Submit survey data to Google Sheets
-export const submitToGoogleSheets = async (url, sheetName, data) => {
+export const submitToGoogleSheets = async (url, sheetName, data, driveFolderId) => {
   if (!url || !url.trim()) {
     throw new Error('Google Sheets is not configured');
   }
@@ -52,6 +91,7 @@ export const submitToGoogleSheets = async (url, sheetName, data) => {
       body: JSON.stringify({
         action: 'submit',
         sheetName: sheetName || 'Dealer Survey Data',
+        driveFolderId: driveFolderId || '',
         data: data,
         timestamp: new Date().toISOString()
       })

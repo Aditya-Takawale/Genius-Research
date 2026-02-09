@@ -26,9 +26,25 @@ function doPost(e) {
       ).setMimeType(ContentService.MimeType.JSON);
     }
     
+    if (data.action === 'testDrive') {
+      // Test Drive folder connection
+      var result = testDriveFolder(data.folderId);
+      return ContentService.createTextOutput(
+        JSON.stringify(result)
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    
     if (data.action === 'submit') {
       // Submit survey data
       var result = submitSurveyData(data);
+      return ContentService.createTextOutput(
+        JSON.stringify(result)
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    if (data.action === 'uploadFiles') {
+      // Handle file uploads to Google Drive
+      var result = uploadFilesToDrive(data);
       return ContentService.createTextOutput(
         JSON.stringify(result)
       ).setMimeType(ContentService.MimeType.JSON);
@@ -60,6 +76,7 @@ function submitSurveyData(requestData) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheetName = requestData.sheetName || 'Dealer Survey Data';
     var sheet = ss.getSheetByName(sheetName);
+    var driveFolderId = requestData.driveFolderId || '';
     
     var surveyData = requestData.data;
     
@@ -69,12 +86,13 @@ function submitSurveyData(requestData) {
       
       // Add dynamic columns from first submission
       var allKeys = Object.keys(surveyData).sort();
-      var sectionAKeys = ['Q1A_City', 'Q1B_OEM', 'Q1C_Model', 'S1_1_DealerName', 'S1_2_DealerAddress', 
+      var sectionAKeys = ['serialNumber', 'Q1A_City', 'Q1B_OEM', 'Q1C_Model', 'S1_1_DealerName', 'S1_2_DealerAddress', 
                           'S1_3_DistrictName', 'S1_4_StateName', 'S1_5_RespondentName', 'S1_6_RespondentContact',
                           'Q1C_Gender', 'Q2_Experience', 'Q3_Designation', 'Q4_ModelExperience', 'Q5_KnowledgeLevel',
+                          'filledForms_URLs', 'brochures_URLs', 'filledForms', 'brochures',
                           'submittedAt', 'submittedDate', 'submittedTime'];
       
-      var headerRow = 15; // Current header count
+      var headerRow = 18; // Current header count (including Serial Number and file URLs)
       allKeys.forEach(function(key) {
         if (sectionAKeys.indexOf(key) === -1) {
           headerRow++;
@@ -101,13 +119,36 @@ function submitSurveyData(requestData) {
       });
     }
     
+    // Generate sequential serial number
+    var lastRow = sheet.getLastRow();
+    var serialNumber = lastRow; // Row 1 is header, so row 2 = serial 1, etc.
+    surveyData.serialNumber = serialNumber;
+    
+    // Handle file uploads if present
+    var fileUrls = {
+      filledForms: '',
+      brochures: ''
+    };
+    
+    if (surveyData.filledForms || surveyData.brochures) {
+      var uploadResult = uploadSurveyFiles(surveyData, serialNumber.toString(), driveFolderId);
+      
+      if (uploadResult.success) {
+        fileUrls = uploadResult.urls;
+        // Add file URLs to survey data
+        surveyData.filledForms_URLs = fileUrls.filledForms;
+        surveyData.brochures_URLs = fileUrls.brochures;
+      }
+    }
+    
     var rowData = buildProperRow(surveyData, requestData.timestamp, sheet);
     sheet.appendRow(rowData);
     
     return {
       result: 'success',
       message: 'Survey submitted successfully',
-      row: sheet.getLastRow()
+      row: sheet.getLastRow(),
+      fileUrls: fileUrls
     };
     
   } catch (error) {
@@ -120,13 +161,16 @@ function submitSurveyData(requestData) {
 
 function createProperHeaders(sheet) {
   var headers = [
+    'Serial Number',
     'Timestamp',
     // SECTION A: Administrative - exactly as collected
     'Q1A_City', 'Q1B_OEM', 'Q1C_Model',
     'S1_1_DealerName', 'S1_2_DealerAddress', 'S1_3_DistrictName', 'S1_4_StateName',
     'S1_5_RespondentName', 'S1_6_RespondentContact',
     'Q1C_Gender', 'Q2_Experience', 'Q3_Designation',
-    'Q4_ModelExperience', 'Q5_KnowledgeLevel'
+    'Q4_ModelExperience', 'Q5_KnowledgeLevel',
+    // File Upload URLs
+    'filledForms_URLs', 'brochures_URLs'
   ];
   
   // Add all remaining columns dynamically on first submission
@@ -146,6 +190,8 @@ function buildProperRow(data, timestamp, sheet) {
   function get(key) {
     var val = data[key];
     if (val === null || val === undefined) return '';
+    // Don't store the actual file data arrays (filledForms, brochures) - only store URLs
+    if (key === 'filledForms' || key === 'brochures') return '';
     if (Array.isArray(val)) return val.join(', ');
     if (typeof val === 'object') return JSON.stringify(val);
     return val;
@@ -158,7 +204,9 @@ function buildProperRow(data, timestamp, sheet) {
     var row = [];
     
     headers.forEach(function(header) {
-      if (header === 'Timestamp') {
+      if (header === 'Serial Number') {
+        row.push(get('serialNumber'));
+      } else if (header === 'Timestamp') {
         row.push(timestamp || new Date().toISOString());
       } else {
         row.push(get(header));
@@ -170,6 +218,7 @@ function buildProperRow(data, timestamp, sheet) {
   
   // Fallback: build row in default order
   var row = [
+    get('serialNumber'),
     timestamp || new Date().toISOString(),
     // Section A in exact order
     get('Q1A_City'), get('Q1B_OEM'), get('Q1C_Model'),
@@ -181,8 +230,9 @@ function buildProperRow(data, timestamp, sheet) {
   
   // Add all other fields dynamically in alphabetical order
   var allKeys = Object.keys(data).sort();
-  var sectionAKeys = ['Q1A_City', 'Q1B_OEM', 'Q1C_Model', 'S1_1_DealerName', 'S1_2_DealerAddress', 
+  var sectionAKeys = ['serialNumber', 'Q1A_City', 'Q1B_OEM', 'Q1C_Model', 'S1_1_DealerName', 'S1_2_DealerAddress', 
                       'S1_3_DistrictName', 'S1_4_StateName', 'S1_5_RespondentName', 'S1_6_RespondentContact',
+                      'filledForms_URLs', 'brochures_URLs', 'filledForms', 'brochures',
                       'Q1C_Gender', 'Q2_Experience', 'Q3_Designation', 'Q4_ModelExperience', 'Q5_KnowledgeLevel',
                       'submittedAt', 'submittedDate', 'submittedTime'];
   
@@ -193,4 +243,160 @@ function buildProperRow(data, timestamp, sheet) {
   });
   
   return row;
+}
+
+// Function to upload files to Google Drive
+function uploadSurveyFiles(surveyData, serialNumber, driveFolderId) {
+  try {
+    var mainFolder;
+    
+    // Use provided folder ID or create a new folder
+    if (driveFolderId && driveFolderId.trim() !== '') {
+      try {
+        mainFolder = DriveApp.getFolderById(driveFolderId);
+      } catch (e) {
+        throw new Error('Invalid Drive Folder ID: ' + e.message);
+      }
+    } else {
+      // Fallback: create folder in root drive
+      var mainFolderName = 'Dealer Survey Files';
+      mainFolder = getOrCreateFolder(mainFolderName);
+    }
+    
+    // Create a subfolder for this specific survey using serial number
+    var surveyFolderName = 'Survey_' + serialNumber + '_' + new Date().toISOString().split('T')[0];
+    var surveyFolder = getOrCreateFolder(surveyFolderName, mainFolder);
+    
+    var urls = {
+      filledForms: '',
+      brochures: ''
+    };
+    
+    // Upload filled forms (images)
+    if (surveyData.filledForms && Array.isArray(surveyData.filledForms) && surveyData.filledForms.length > 0) {
+      var formsFolder = getOrCreateFolder('Filled_Forms', surveyFolder);
+      var formUrls = [];
+      
+      surveyData.filledForms.forEach(function(file, index) {
+        try {
+          var fileBlob = convertBase64ToBlob(file.data, file.type);
+          var fileName = file.name || ('filled_form_' + (index + 1) + getFileExtension(file.type));
+          var driveFile = formsFolder.createFile(fileBlob.setName(fileName));
+          driveFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          formUrls.push(driveFile.getUrl());
+        } catch (err) {
+          Logger.log('Error uploading form file: ' + err);
+        }
+      });
+      
+      urls.filledForms = formUrls.join('\\n');
+    }
+    
+    // Upload brochures (PDFs)
+    if (surveyData.brochures && Array.isArray(surveyData.brochures) && surveyData.brochures.length > 0) {
+      var brochuresFolder = getOrCreateFolder('Brochures', surveyFolder);
+      var brochureUrls = [];
+      
+      surveyData.brochures.forEach(function(file, index) {
+        try {
+          var fileBlob = convertBase64ToBlob(file.data, file.type);
+          var fileName = file.name || ('brochure_' + (index + 1) + '.pdf');
+          var driveFile = brochuresFolder.createFile(fileBlob.setName(fileName));
+          driveFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          brochureUrls.push(driveFile.getUrl());
+        } catch (err) {
+          Logger.log('Error uploading brochure file: ' + err);
+        }
+      });
+      
+      urls.brochures = brochureUrls.join('\\n');
+    }
+    
+    return {
+      success: true,
+      urls: urls,
+      folderUrl: surveyFolder.getUrl()
+    };
+    
+  } catch (error) {
+    Logger.log('Error in uploadSurveyFiles: ' + error);
+    return {
+      success: false,
+      error: error.toString(),
+      urls: { filledForms: '', brochures: '' }
+    };
+  }
+}
+
+// Helper function to get or create a folder
+function getOrCreateFolder(folderName, parentFolder) {
+  var parent = parentFolder || DriveApp;
+  var folders = parent.getFoldersByName(folderName);
+  
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    if (parentFolder) {
+      return parentFolder.createFolder(folderName);
+    } else {
+      return DriveApp.createFolder(folderName);
+    }
+  }
+}
+
+// Helper function to convert base64 to blob
+function convertBase64ToBlob(base64Data, mimeType) {
+  // Remove data URI prefix if present
+  var base64 = base64Data.split(',')[1] || base64Data;
+  
+  // Decode base64
+  var decoded = Utilities.base64Decode(base64);
+  
+  // Create blob
+  return Utilities.newBlob(decoded, mimeType);
+}
+
+// Helper function to get file extension from mime type
+function getFileExtension(mimeType) {
+  var extensions = {
+    'image/jpeg': '.jpg',
+    'image/jpg': '.jpg',
+    'image/png': '.png',
+    'image/gif': '.gif',
+    'image/webp': '.webp',
+    'image/heic': '.heic',
+    'image/heif': '.heif',
+    'image/bmp': '.bmp',
+    'image/tiff': '.tiff',
+    'application/pdf': '.pdf'
+  };
+  
+  return extensions[mimeType] || '';
+}
+
+// Function to test Drive folder connection
+function testDriveFolder(folderId) {
+  try {
+    if (!folderId || folderId.trim() === '') {
+      return {
+        result: 'error',
+        error: 'Folder ID is required'
+      };
+    }
+    
+    var folder = DriveApp.getFolderById(folderId);
+    var folderName = folder.getName();
+    
+    return {
+      result: 'success',
+      folderName: folderName,
+      message: 'Connected to folder: ' + folderName
+    };
+    
+  } catch (error) {
+    return {
+      result: 'error',
+      error: 'Invalid Folder ID or no access. Error: ' + error.toString()
+    };
+  }
 }

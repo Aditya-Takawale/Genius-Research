@@ -27,6 +27,7 @@ const SuccessScreen = ({ onNewSurvey }) => {
               <h3 className="font-semibold text-genius-dark mb-2">What happens next?</h3>
               <ul className="text-sm text-genius-gray space-y-1">
                 <li>✓ Your data has been saved to Google Sheets</li>
+                <li>✓ Uploaded files have been saved to Google Drive</li>
                 <li>✓ You can start a new survey with another dealer</li>
                 <li>✓ All offline responses will sync automatically when online</li>
               </ul>

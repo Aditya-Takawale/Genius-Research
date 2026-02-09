@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { getSheetConfig, saveSheetConfig } from '../utils/storage';
-import { testSheetConnection } from '../utils/sheetService';
+import { testSheetConnection, testDriveConnection } from '../utils/sheetService';
 
 const ConfigPanel = ({ onClose, onSave }) => {
   const [config, setConfig] = useState({
     sheetUrl: '',
-    sheetName: 'Dealer Survey Data'
+    sheetName: 'Dealer Survey Data',
+    driveFolderId: ''
   });
   const [testing, setTesting] = useState(false);
+  const [testingDrive, setTestingDrive] = useState(false);
   const [testResult, setTestResult] = useState(null);
+  const [driveTestResult, setDriveTestResult] = useState(null);
   const [showInstructions, setShowInstructions] = useState(false);
 
   useEffect(() => {
     const savedConfig = getSheetConfig();
     if (savedConfig) {
-      setConfig(savedConfig);
+      // Merge with defaults to ensure all fields exist
+      setConfig({
+        sheetUrl: savedConfig.sheetUrl || '',
+        sheetName: savedConfig.sheetName || 'Dealer Survey Data',
+        driveFolderId: savedConfig.driveFolderId || ''
+      });
     }
   }, []);
 
@@ -38,11 +46,60 @@ const ConfigPanel = ({ onClose, onSave }) => {
     }
   };
 
+  const extractFolderId = (input) => {
+    // If it's a full URL, extract the folder ID
+    const urlPattern = /drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/;
+    const match = input.match(urlPattern);
+    if (match) {
+      return match[1];
+    }
+    // Remove any query parameters if pasted with ?usp=...
+    return input.split('?')[0].trim();
+  };
+
+  const handleDriveFolderChange = (e) => {
+    const input = e.target.value;
+    const folderId = extractFolderId(input);
+    setConfig({ ...config, driveFolderId: folderId });
+  };
+
+  const handleTestDrive = async () => {
+    setTestingDrive(true);
+    setDriveTestResult(null);
+    
+    try {
+      const result = await testDriveConnection(config.sheetUrl, config.driveFolderId);
+      setDriveTestResult({
+        success: true,
+        message: `Drive connected! Folder: "${result.folderName}"`
+      });
+    } catch (error) {
+      let errorMsg = error.message || 'Drive connection failed. Please check your Folder ID.';
+      if (errorMsg.includes('Invalid response')) {
+        errorMsg = 'Drive test requires updated Apps Script. Please re-deploy the Google Apps Script first.';
+      }
+      setDriveTestResult({
+        success: false,
+        message: errorMsg
+      });
+    } finally {
+      setTestingDrive(false);
+    }
+  };
+
   const handleSave = () => {
     if (!config.sheetUrl.trim()) {
       setTestResult({
         success: false,
         message: 'Please enter a Google Sheets Web App URL'
+      });
+      return;
+    }
+
+    if (!config.driveFolderId.trim()) {
+      setTestResult({
+        success: false,
+        message: 'Please enter a Google Drive Folder ID'
       });
       return;
     }
@@ -62,8 +119,8 @@ const ConfigPanel = ({ onClose, onSave }) => {
     <div className="card max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-genius-dark">Google Sheets Configuration</h2>
-          <p className="text-sm text-genius-gray mt-1">Connect your Google Sheet to store survey responses</p>
+          <h2 className="text-2xl font-bold text-genius-dark">Google Configuration</h2>
+          <p className="text-sm text-genius-gray mt-1">Connect your Google Sheet and Drive to store survey data and files</p>
         </div>
         <button
           onClick={onClose}
@@ -208,6 +265,55 @@ const ConfigPanel = ({ onClose, onSave }) => {
             The name of the sheet tab where data will be stored (default: "Dealer Survey Data")
           </p>
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-genius-dark mb-2">
+            Google Drive Folder ID <span className="text-red-500">*</span>
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              className="input-field flex-1"
+              placeholder="Folder ID or full Google Drive folder URL"
+              value={config.driveFolderId}
+              onChange={handleDriveFolderChange}
+            />
+            <button
+              onClick={handleTestDrive}
+              disabled={testingDrive || !config.driveFolderId.trim() || !config.sheetUrl.trim()}
+              className="btn-secondary whitespace-nowrap"
+            >
+              {testingDrive ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Testing...
+                </span>
+              ) : (
+                'Test Drive'
+              )}
+            </button>
+          </div>
+          {driveTestResult && (
+            <div className={`mt-2 p-2 rounded text-sm ${driveTestResult.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+              {driveTestResult.success ? '✓' : '✗'} {driveTestResult.message}
+            </div>
+          )}
+          <div className="text-xs text-genius-gray mt-2 space-y-1">
+            <p>Paste the full folder URL or just the Folder ID - we'll extract it automatically</p>
+            <details className="mt-2">
+              <summary className="cursor-pointer font-semibold text-genius-blue hover:underline">How to get Folder ID?</summary>
+              <ol className="list-decimal list-inside mt-2 space-y-1 pl-2">
+                <li>Open Google Drive and create a new folder (e.g., "Dealer Survey Files")</li>
+                <li>Open that folder</li>
+                <li>Copy the URL from the browser address bar</li>
+                <li>Paste the entire URL here (or just the ID part)</li>
+              </ol>
+            </details>
+          </div>
+        </div>
       </div>
 
       {/* Test Result */}
@@ -267,7 +373,7 @@ const ConfigPanel = ({ onClose, onSave }) => {
         </button>
         <button
           onClick={handleSave}
-          disabled={!config.sheetUrl.trim()}
+          disabled={!config.sheetUrl.trim() || !config.driveFolderId.trim()}
           className="btn-primary"
         >
           Save Configuration

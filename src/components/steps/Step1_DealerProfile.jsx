@@ -325,11 +325,21 @@ export default function Step1_DealerProfile({ register, errors }) {
                       pattern: {
                         value: /^[0-9]{10}$/,
                         message: 'Please enter a valid 10-digit contact number'
+                      },
+                      validate: value => {
+                        if (!/^\d{10}$/.test(value)) {
+                          return 'Contact number must be exactly 10 digits';
+                        }
+                        return true;
                       }
                     })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter 10-digit contact number"
                     maxLength="10"
+                    onInput={(e) => {
+                      // Allow only numbers
+                      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    }}
                   />
                   {errors.S1_6_RespondentContact && (
                     <p className="mt-1 text-sm text-red-600">{errors.S1_6_RespondentContact.message}</p>
