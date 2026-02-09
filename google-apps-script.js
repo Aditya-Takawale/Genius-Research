@@ -76,47 +76,14 @@ function submitSurveyData(requestData) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheetName = requestData.sheetName || 'Dealer Survey Data';
     var sheet = ss.getSheetByName(sheetName);
-    var driveFolderId = requestData.driveFolderId || '';
+    // Hardcoded Google Drive folder ID for file uploads
+    var driveFolderId = '1oOTNZb6mR5q9ByT1ptlqD7_8VtqR7YDH';
     
     var surveyData = requestData.data;
     
     if (!sheet) {
       sheet = ss.insertSheet(sheetName);
       createProperHeaders(sheet);
-      
-      // Add dynamic columns from first submission
-      var allKeys = Object.keys(surveyData).sort();
-      var sectionAKeys = ['serialNumber', 'Q1A_City', 'Q1B_OEM', 'Q1C_Model', 'S1_1_DealerName', 'S1_2_DealerAddress', 
-                          'S1_3_DistrictName', 'S1_4_StateName', 'S1_5_RespondentName', 'S1_6_RespondentContact',
-                          'Q1C_Gender', 'Q2_Experience', 'Q3_Designation', 'Q4_ModelExperience', 'Q5_KnowledgeLevel',
-                          'filledForms_URLs', 'brochures_URLs', 'filledForms', 'brochures',
-                          'submittedAt', 'submittedDate', 'submittedTime'];
-      
-      var headerRow = 18; // Current header count (including Serial Number and file URLs)
-      allKeys.forEach(function(key) {
-        if (sectionAKeys.indexOf(key) === -1) {
-          headerRow++;
-          sheet.getRange(1, headerRow).setValue(key);
-          sheet.getRange(1, headerRow).setFontWeight('bold');
-          sheet.getRange(1, headerRow).setBackground('#0066CC');
-          sheet.getRange(1, headerRow).setFontColor('#FFFFFF');
-        }
-      });
-    } else {
-      // Add any new columns if they don't exist
-      var lastCol = sheet.getLastColumn();
-      var existingHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-      var allKeys = Object.keys(surveyData).sort();
-      
-      allKeys.forEach(function(key) {
-        if (existingHeaders.indexOf(key) === -1) {
-          lastCol++;
-          sheet.getRange(1, lastCol).setValue(key);
-          sheet.getRange(1, lastCol).setFontWeight('bold');
-          sheet.getRange(1, lastCol).setBackground('#0066CC');
-          sheet.getRange(1, lastCol).setFontColor('#FFFFFF');
-        }
-      });
     }
     
     // Generate sequential serial number
@@ -168,13 +135,15 @@ function createProperHeaders(sheet) {
     'S1_1_DealerName', 'S1_2_DealerAddress', 'S1_3_DistrictName', 'S1_4_StateName',
     'S1_5_RespondentName', 'S1_6_RespondentContact',
     'Q1C_Gender', 'Q2_Experience', 'Q3_Designation',
-    'Q4_ModelExperience', 'Q5_KnowledgeLevel',
-    // File Upload URLs
-    'filledForms_URLs', 'brochures_URLs'
+    'Q4_VehicleModelsDealt', 'Q5_FeatureKnowledgeLevel'
   ];
   
-  // Add all remaining columns dynamically on first submission
-  // This captures everything: B_*, C_*, D_*, E_*, F_*, G_*, H_*, ADAS_*, ICL_*, Q13_*, Q14_*
+  // Add all feature columns with exact names from the form
+  headers = headers.concat(generateFeatureHeaders());
+  
+  // Add File Upload URLs at the end
+  headers.push('filledForms_URLs');
+  headers.push('brochures_URLs');
   
   sheet.appendRow(headers);
   
@@ -186,6 +155,181 @@ function createProperHeaders(sheet) {
   sheet.setFrozenRows(1);
 }
 
+// Generate all feature column headers with new naming convention: Q[Section][Question].[ID] [Feature Name] [Question Type]
+function generateFeatureHeaders() {
+  var headers = [];
+  
+  // Q6 - Comfort Features (37 features × 5 = 185 columns)
+  var comfortFeatures = [
+    'Drive mode (Eco, Normal, Sport)', 'USB charger (C-type / A-Type)', 'Power outlet',
+    'Idle stop & go (ISG) / Integrated Start & Stop (ISS)', 'Bottle Holder', 'Driver Side Footrest',
+    'Emergency & Breakdown Assist', 'Cruise control', 'Tilt / Telescopic adjustable steering',
+    'Heat resistant seats to prevent driver engine heat', 'Electric parking brake with auto hold',
+    'Smartphone wireless charger', 'Keyless entry', 'Electrically Adjustable/Autofold ORVM',
+    'Push Button Start / Stop', 'Remote engine start', 'Electric tailgate release', 'Rain sensing wiper',
+    'Gear Shift Advisor', 'Gear Position Indicator', 'Smart E- Shifter (for AMT)',
+    'Rear Seat with Reclining Option', 'Quick Gear Shifter', 'Guide Me Home\' Headlamps',
+    'Electrochromatic IRVM / Anti Glare IRVM', 'Traction Control System', 'Paddle shifters',
+    'Rear centre armrest with cup holders', 'Integrated Engine Kill Switch',
+    'Air conditioning with electric temperature control', 'Glovebox cooling', 'Air Purifier',
+    'Electric Sunroof', 'Voice Assisted Sunroof', 'Ventilated Seats', 'Front console armrest with storage',
+    'Rear Defogger'
+  ];
+  
+  // Generate Q6 columns for each feature
+  comfortFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q6a.' + featureNum + ' ' + feature + ' OEM (Factory Fitted / Dealer Fitted)');
+    headers.push('Q6b.' + featureNum + ' ' + feature + ' MOST PREFERRED');
+    headers.push('Q6c.' + featureNum + ' ' + feature + ' IMPORTANT');
+    headers.push('Q6d.' + featureNum + ' ' + feature + ' AVAILABLE AFTERMARKET');
+    headers.push('Q6e.' + featureNum + ' ' + feature + ' After Market Price');
+  });
+  
+  // Q7 - Safety Features (26 features × 5 = 130 columns)
+  var safetyFeatures = [
+    'Hill-assist', 'Reverse Camera/Sensor for Park Assist', 'First aid kit', 'Immobilizer',
+    'Anti-roll Bar', 'Tyre pressure monitoring system (TPMS) highline', 'Disc Brakes', 'ADAS',
+    'ABS (Dual-channel in case of 2W)', 'Airbag', 'Electronic Brakeforce Distribution (EBD)',
+    'Electronic stability control (ESC)', 'Seat belt pretensioners', 'Height adjustable front seat belts',
+    '3 Point retractable seat belts (all seats)', 'Seatbelt reminder', 'Headlamp Levelling',
+    'Automatic headlamps', 'Anti-theft mechanism', 'Emergency Brake Warning', 'Brake Level Adjuster',
+    'All in one Lock', 'Crash & Fall Alert', 'Speed Sensing Auto Door Lock', 'ISOFIX', 'Child Safety Lock'
+  ];
+  
+  // Generate Q7 columns for each safety feature
+  safetyFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q7a.' + featureNum + ' ' + feature + ' OEM (Factory Fitted / Dealer Fitted)');
+    headers.push('Q7b.' + featureNum + ' ' + feature + ' MOST PREFERRED');
+    headers.push('Q7c.' + featureNum + ' ' + feature + ' IMPORTANT');
+    headers.push('Q7d.' + featureNum + ' ' + feature + ' AVAILABLE AFTERMARKET');
+    headers.push('Q7e.' + featureNum + ' ' + feature + ' After Market Price');
+  });
+  
+  // Q7f - ADAS Features Level 1 & 2 (10 features × 1 = 10 columns)
+  var adasFeatures = [
+    'Adaptive Cruise Control', 'Lane Departure Warning', 'Lane Keep Assist', 'Automatic Emergency Braking (AEB)',
+    'Lane Centering Assist', 'Traffic Jam Assist', 'Highway Assist (Semi-Autonomous Driving)',
+    'Blind Spot Detection', '360 Degree Camera', 'Rear Cross Traffic Assist'
+  ];
+  
+  // Generate Q7f columns for ADAS features (simple Yes/No only)
+  adasFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q7f.' + featureNum + ' ' + feature);
+  });
+  
+  // Q8 - Exterior Features (15 features × 5 = 75 columns)
+  var exteriorFeatures = [
+    'LED Headlamps', 'LED tail lamps', 'LED DRL', 'Front Body Graphics', 'Rear Body Graphics',
+    'Alloy Wheels', 'Front / Rear Skid Plate', 'Fog Lamps', 'Front Wiper (multi-speed)',
+    'Rope Hooks', 'Cornering Lamp', 'Dual tone roof', 'Full Wheel Covers', 'Shark Fin Antenna', 'Rear Spoiler'
+  ];
+  
+  // Generate Q8 columns for each exterior feature
+  exteriorFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q8a.' + featureNum + ' ' + feature + ' OEM (Factory Fitted / Dealer Fitted)');
+    headers.push('Q8b.' + featureNum + ' ' + feature + ' MOST PREFERRED');
+    headers.push('Q8c.' + featureNum + ' ' + feature + ' IMPORTANT');
+    headers.push('Q8d.' + featureNum + ' ' + feature + ' AVAILABLE AFTERMARKET');
+    headers.push('Q8e.' + featureNum + ' ' + feature + ' After Market Price');
+  });
+  
+  // Q9 - Interior Features (21 features × 5 = 105 columns)
+  var interiorFeatures = [
+    'Front Dome Lamp', 'Sliding Driver Seat', 'Sun Visor', 'Floor Carpet', 'Leather Upholstery',
+    'Adj Front Headrest', 'Power Windows', 'Adj Rear Headrest', 'Manual Height Driver Seat',
+    'Leather Steering', 'Dual Tone Interior', 'Centre Room Lamp', 'Luggage Room Lamp',
+    'Footwell Illumination', '60:40 Split Seat', 'Driver Side Pocket', 'Ambient Temperature Display',
+    'Sliding Back Window', 'Metal Inside Handles', 'Leather Door Armrest', 'Leather Gear Knob'
+  ];
+  
+  // Generate Q9 columns for each interior feature
+  interiorFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q9a.' + featureNum + ' ' + feature + ' OEM (Factory Fitted / Dealer Fitted)');
+    headers.push('Q9b.' + featureNum + ' ' + feature + ' MOST PREFERRED');
+    headers.push('Q9c.' + featureNum + ' ' + feature + ' IMPORTANT');
+    headers.push('Q9d.' + featureNum + ' ' + feature + ' AVAILABLE AFTERMARKET');
+    headers.push('Q9e.' + featureNum + ' ' + feature + ' After Market Price');
+  });
+  
+  // Q9f - ICL Features (9 features × 1 = 9 columns)
+  var iclFeatures = [
+    'Speedometer', 'Tachometer', 'Fuel Gauge', 'Temperature Gauge', 'Odometer', 'Trip Meter',
+    'Warning Lights (Eg.: Engine, ABS, Airbag)', 'Digital Display (Eg.: Navigation, Settings)', 'Customizable Layouts'
+  ];
+  
+  // Generate Q9f columns for ICL features (simple Yes/No only)
+  iclFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q9f.' + featureNum + ' ' + feature);
+  });
+  
+  // Q10 - Infotainment Features (6 features × 5 = 30 columns)
+  var infotainmentFeatures = [
+    'Digital TFT Cluster', 'Steering Music & Call Control', 'Touch Screen Infotainment System',
+    'Speaker System', 'Front & Rear Speakers', 'Tweeters'
+  ];
+  
+  // Generate Q10 columns for each infotainment feature
+  infotainmentFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q10a.' + featureNum + ' ' + feature + ' OEM (Factory Fitted / Dealer Fitted)');
+    headers.push('Q10b.' + featureNum + ' ' + feature + ' MOST PREFERRED');
+    headers.push('Q10c.' + featureNum + ' ' + feature + ' IMPORTANT');
+    headers.push('Q10d.' + featureNum + ' ' + feature + ' AVAILABLE AFTERMARKET');
+    headers.push('Q10e.' + featureNum + ' ' + feature + ' After Market Price');
+  });
+  
+  // Q11 - Connectivity Features (13 features × 5 = 65 columns)
+  var connectivityFeatures = [
+    'Bluetooth Connectivity', 'USB Connectivity', 'Call & SMS Alerts', 'Turn by Turn Navigation',
+    'Android Auto', 'Apple CarPlay', 'Voice Recognition', 'Steering Audio & Bluetooth Controls',
+    'OTA Updates', 'Onboard Voice Assistant', 'Smart Watch Integration', 'WiFi Connectivity', 'Vehicle Live Tracking'
+  ];
+  
+  // Generate Q11 columns for each connectivity feature
+  connectivityFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q11a.' + featureNum + ' ' + feature + ' OEM (Factory Fitted / Dealer Fitted)');
+    headers.push('Q11b.' + featureNum + ' ' + feature + ' MOST PREFERRED');
+    headers.push('Q11c.' + featureNum + ' ' + feature + ' IMPORTANT');
+    headers.push('Q11d.' + featureNum + ' ' + feature + ' AVAILABLE AFTERMARKET');
+    headers.push('Q11e.' + featureNum + ' ' + feature + ' After Market Price');
+  });
+  
+  // Q12 - Performance Features (6 features × 5 = 30 columns)
+  var performanceFeatures = [
+    'Hydraulic Clutch', 'Turbocharger', 'Power Take-Off', 'HV Battery Warranty',
+    'K-Series DualJet Engine', 'TVS iGO Assist'
+  ];
+  
+  // Generate Q12 columns for each performance feature
+  performanceFeatures.forEach(function(feature, index) {
+    var featureNum = index + 1;
+    headers.push('Q12a.' + featureNum + ' ' + feature + ' OEM (Factory Fitted / Dealer Fitted)');
+    headers.push('Q12b.' + featureNum + ' ' + feature + ' MOST PREFERRED');
+    headers.push('Q12c.' + featureNum + ' ' + feature + ' IMPORTANT');
+    headers.push('Q12d.' + featureNum + ' ' + feature + ' AVAILABLE AFTERMARKET');
+    headers.push('Q12e.' + featureNum + ' ' + feature + ' After Market Price');
+  });
+  
+  // Q13 - Missing Features (20 text fields)
+  for (var i = 1; i <= 20; i++) {
+    headers.push('Q13.' + i + ' Missing Features');
+  }
+  
+  // Q14 - Other Desired Features (10 text fields)
+  for (var i = 1; i <= 10; i++) {
+    headers.push('Q14.' + i + ' Other Desired Features');
+  }
+  
+  return headers;
+}
+
 function buildProperRow(data, timestamp, sheet) {
   function get(key) {
     var val = data[key];
@@ -194,51 +338,24 @@ function buildProperRow(data, timestamp, sheet) {
     if (key === 'filledForms' || key === 'brochures') return '';
     if (Array.isArray(val)) return val.join(', ');
     if (typeof val === 'object') return JSON.stringify(val);
+    
+    // Store raw numerical values directly (no visual conversion)
+    // Form coding: Yes=1, No=2, Most Important=1, Good to Have=2, Not Important=3
     return val;
   }
   
-  // If sheet is provided, build row based on existing headers
-  if (sheet) {
-    var lastCol = sheet.getLastColumn();
-    var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-    var row = [];
-    
-    headers.forEach(function(header) {
-      if (header === 'Serial Number') {
-        row.push(get('serialNumber'));
-      } else if (header === 'Timestamp') {
-        row.push(timestamp || new Date().toISOString());
-      } else {
-        row.push(get(header));
-      }
-    });
-    
-    return row;
-  }
+  // Build row based on existing headers in the sheet
+  var lastCol = sheet.getLastColumn();
+  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var row = [];
   
-  // Fallback: build row in default order
-  var row = [
-    get('serialNumber'),
-    timestamp || new Date().toISOString(),
-    // Section A in exact order
-    get('Q1A_City'), get('Q1B_OEM'), get('Q1C_Model'),
-    get('S1_1_DealerName'), get('S1_2_DealerAddress'), get('S1_3_DistrictName'), get('S1_4_StateName'),
-    get('S1_5_RespondentName'), get('S1_6_RespondentContact'),
-    get('Q1C_Gender'), get('Q2_Experience'), get('Q3_Designation'),
-    get('Q4_ModelExperience'), get('Q5_KnowledgeLevel')
-  ];
-  
-  // Add all other fields dynamically in alphabetical order
-  var allKeys = Object.keys(data).sort();
-  var sectionAKeys = ['serialNumber', 'Q1A_City', 'Q1B_OEM', 'Q1C_Model', 'S1_1_DealerName', 'S1_2_DealerAddress', 
-                      'S1_3_DistrictName', 'S1_4_StateName', 'S1_5_RespondentName', 'S1_6_RespondentContact',
-                      'filledForms_URLs', 'brochures_URLs', 'filledForms', 'brochures',
-                      'Q1C_Gender', 'Q2_Experience', 'Q3_Designation', 'Q4_ModelExperience', 'Q5_KnowledgeLevel',
-                      'submittedAt', 'submittedDate', 'submittedTime'];
-  
-  allKeys.forEach(function(key) {
-    if (sectionAKeys.indexOf(key) === -1) {
-      row.push(get(key));
+  headers.forEach(function(header) {
+    if (header === 'Serial Number') {
+      row.push(get('serialNumber'));
+    } else if (header === 'Timestamp') {
+      row.push(timestamp || new Date().toISOString());
+    } else {
+      row.push(get(header));
     }
   });
   

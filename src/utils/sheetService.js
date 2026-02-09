@@ -1,17 +1,11 @@
+// Hardcoded Google Apps Script URL
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDXZ37yzurU9Vh-hK1khk0CfpEt0liiZF8vdxibwtXJaK2Uidu50fV9s_-2THDw4EO/exec';
+
 // Test connection to Google Sheets
-export const testSheetConnection = async (url) => {
-  if (!url || !url.trim()) {
-    throw new Error('Please provide a valid URL');
-  }
-
-  // Validate URL format
-  if (!url.includes('/macros/s/') || !url.endsWith('/exec')) {
-    throw new Error('❌ Invalid URL format. The URL should end with "/exec" and contain "/macros/s/". Make sure you deployed the script as a Web App and copied the Web App URL (not the script editor URL).');
-  }
-
+export const testSheetConnection = async () => {
   try {
     // Use fetch with text/plain to avoid CORS preflight
-    const response = await fetch(url, {
+    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'cors',
       headers: {
@@ -29,30 +23,22 @@ export const testSheetConnection = async (url) => {
     }
   } catch (error) {
     if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-      throw new Error('❌ Connection failed. Please check:\n1. Your internet connection\n2. The Apps Script is deployed correctly\n3. "Who has access" is set to "Anyone"');
+      throw new Error('❌ Connection failed. Please check your internet connection.');
     }
     throw new Error(error.message || 'Failed to connect to Google Sheets');
   }
 };
 
-// Test Google Drive folder connection
-export const testDriveConnection = async (url, folderId) => {
-  if (!folderId || !folderId.trim()) {
-    throw new Error('Please provide a valid Drive Folder ID');
-  }
-
-  if (!url || !url.trim()) {
-    throw new Error('Please configure Google Sheets URL first');
-  }
-
+// Test Google Drive folder connection (using hardcoded folder ID)
+export const testDriveConnection = async () => {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'cors',
       headers: {
         'Content-Type': 'text/plain;charset=utf-8',
       },
-      body: JSON.stringify({ action: 'testDrive', folderId: folderId })
+      body: JSON.stringify({ action: 'testDrive', folderId: '1oOTNZb6mR5q9ByT1ptlqD7_8VtqR7YDH' })
     });
 
     const data = await response.json();
@@ -75,14 +61,10 @@ export const testDriveConnection = async (url, folderId) => {
 };
 
 // Submit survey data to Google Sheets
-export const submitToGoogleSheets = async (url, sheetName, data, driveFolderId) => {
-  if (!url || !url.trim()) {
-    throw new Error('Google Sheets is not configured');
-  }
-
+export const submitToGoogleSheets = async (data, sheetName = 'Dealer Survey Data') => {
   try {
     // Use fetch with text/plain to avoid CORS preflight
-    const response = await fetch(url, {
+    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'cors',
       headers: {
@@ -90,8 +72,7 @@ export const submitToGoogleSheets = async (url, sheetName, data, driveFolderId) 
       },
       body: JSON.stringify({
         action: 'submit',
-        sheetName: sheetName || 'Dealer Survey Data',
-        driveFolderId: driveFolderId || '',
+        sheetName: sheetName,
         data: data,
         timestamp: new Date().toISOString()
       })

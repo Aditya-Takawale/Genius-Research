@@ -51,45 +51,20 @@ const Step4_Exterior = ({ register, errors }) => {
             <tr>
               <th className="border border-gray-400 px-3 py-2 text-left font-semibold">RESPONSE</th>
               <th className="border border-gray-400 px-3 py-2 text-center font-semibold w-20">Code</th>
-              <th className="border border-gray-400 px-3 py-2 text-center font-semibold w-16"></th>
             </tr>
           </thead>
           <tbody className="bg-white">
             <tr className="hover:bg-gray-50">
               <td className="border border-gray-400 px-3 py-2 font-semibold">MOST IMPORTANT</td>
               <td className="border border-gray-400 px-3 py-2 text-center">1</td>
-              <td className="border border-gray-400 px-3 py-2 text-center">
-                <input
-                  type="radio"
-                  value="1"
-                  {...register('Q8c_Category')}
-                  className="w-4 h-4"
-                />
-              </td>
             </tr>
             <tr className="hover:bg-gray-50">
               <td className="border border-gray-400 px-3 py-2 font-semibold">GOOD TO HAVE BUT NOT THAT IMPORTANT</td>
               <td className="border border-gray-400 px-3 py-2 text-center">2</td>
-              <td className="border border-gray-400 px-3 py-2 text-center">
-                <input
-                  type="radio"
-                  value="2"
-                  {...register('Q8c_Category')}
-                  className="w-4 h-4"
-                />
-              </td>
             </tr>
             <tr className="hover:bg-gray-50">
               <td className="border border-gray-400 px-3 py-2 font-semibold">NOT IMPORTANT AND ARE EASILY COMPROMISED BY CUSTOMERS</td>
               <td className="border border-gray-400 px-3 py-2 text-center">3</td>
-              <td className="border border-gray-400 px-3 py-2 text-center">
-                <input
-                  type="radio"
-                  value="3"
-                  {...register('Q8c_Category')}
-                  className="w-4 h-4"
-                />
-              </td>
             </tr>
           </tbody>
         </table>

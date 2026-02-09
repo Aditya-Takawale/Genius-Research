@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Test Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #0052a3;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .loading { background: #d1ecf1; color: #0c5460; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Dealer Survey Test Submission</h1>
+        <p>This test script will submit sample data to verify your Google Sheet integration is working correctly.</p>
+        
+        <div>
+            <button class="test-button" onclick="testConnection()">Test Connection</button>
+            <button class="test-button" onclick="submitTestData()">Submit Test Survey</button>
+            <button class="test-button" onclick="submitWithFiles()">Submit with Files</button>
+        </div>
+
+        <div id="status"></div>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDXZ37yzurU9Vh-hK1khk0CfpEt0liiZF8vdxibwtXJaK2Uidu50fV9s_-2THDw4EO/exec';
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showStatus(message, type = 'loading') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+        }
+
+        async function testConnection() {
+            showStatus('🔗 Testing connection to Google Apps Script...', 'loading');
+            log('Testing connection...');
+            
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({ action: 'test' })
+                });
+                
+                const data = await response.json();
+                
+                if (data.result === 'success') {
+                    showStatus('✅ Connection successful! Your Google Apps Script is working.', 'success');
+                    log('Connection successful!');
+                } else {
+                    throw new Error(data.message || 'Unknown error');
+                }
+            } catch (error) {
+                showStatus(`❌ Connection failed: ${error.message}`, 'error');
+                log(`Connection failed: ${error.message}`);
+            }
+        }
+
+        function createSampleData() {
+            return {
+                // Administrative data
+                'Q1A_City': 'Mumbai',
+                'Q1B_OEM': 'Maruti Suzuki',
+                'Q1C_Model': 'Swift',
+                'S1_1_DealerName': 'Test Dealer Motors',
+                'S1_2_DealerAddress': '123 Test Street, Andheri West, Mumbai',
+                'S1_3_DistrictName': 'Mumbai',
+                'S1_4_StateName': 'Maharashtra',
+                'S1_5_RespondentName': 'Rahul Sharma',
+                'S1_6_RespondentContact': '9876543210',
+                'Q1C_Gender': 'M',
+                'Q2_Experience': '5-10 years',
+                'Q3_Designation': 'Sales Manager',
+                
+                // Q4: Vehicle Models/Variants Dealt With (from form: 1=Tata Signa, 2=Mahindra Supro, 3=MSIL Super Carry, 4=Tata Curvy, 5=MSIL Dzire, 6=TVS King, 7=TVS Ntorq)
+                'Q4_VehicleModelsDealt': '1,3,5', // Tata Signa 1923.K, MSIL Super Carry, MSIL Dzire ZXI
+                
+                // Q5: Feature Knowledge Level (from form: 1=YES Fully Equipped, 2=YES Partially, 3=Can't say, 4=Not equipped)
+                'Q5_FeatureKnowledgeLevel': '1', // YES, Fully Equipped
+
+                // Comprehensive feature responses across ALL sections
+                // CODING SYSTEM: Column a,d (Yes/No): 1=Yes, 2=No | Column b (Tick): 1=Ticked, 2=Not Ticked | Column c (Importance): 1=Most Important, 2=Good to Have, 3=Not Important
+                // Q6 - Comfort & Convenience Features (37 features × 5 columns = 185)
+                'Q6a.1 Drive mode (Eco, Normal, Sport) OEM (Factory Fitted / Dealer Fitted)': '1', // 1 = Yes
+                'Q6b.1 Drive mode (Eco, Normal, Sport) MOST PREFERRED': '1', // 1 = Ticked
+                'Q6c.1 Drive mode (Eco, Normal, Sport) IMPORTANT': '1', // 1 = Most Important
+                'Q6d.1 Drive mode (Eco, Normal, Sport) AVAILABLE AFTERMARKET': '2', // 2 = No
+                'Q6e.1 Drive mode (Eco, Normal, Sport) After Market Price': '15000',
+
+                'Q6a.2 USB charger (C-type / A-Type) OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q6b.2 USB charger (C-type / A-Type) MOST PREFERRED': '1',
+                'Q6c.2 USB charger (C-type / A-Type) IMPORTANT': '2', // 2 = Good to Have
+                'Q6d.2 USB charger (C-type / A-Type) AVAILABLE AFTERMARKET': '1',
+                'Q6e.2 USB charger (C-type / A-Type) After Market Price': '2500',
+
+                'Q6a.3 Power outlet OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q6b.3 Power outlet MOST PREFERRED': '2', // 2 = Not Ticked
+                'Q6c.3 Power outlet IMPORTANT': '3', // 3 = Not Important
+                'Q6d.3 Power outlet AVAILABLE AFTERMARKET': '1',
+                'Q6e.3 Power outlet After Market Price': '1800',
+
+                // Q7 - Safety Features (26 features × 5 columns = 130)
+                'Q7a.1 Hill-assist OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q7b.1 Hill-assist MOST PREFERRED': '1',
+                'Q7c.1 Hill-assist IMPORTANT': '1',
+                'Q7d.1 Hill-assist AVAILABLE AFTERMARKET': '2',
+                'Q7e.1 Hill-assist After Market Price': '',
+
+                'Q7a.2 Reverse Camera/Sensor for Park Assist OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q7b.2 Reverse Camera/Sensor for Park Assist MOST PREFERRED': '1',
+                'Q7c.2 Reverse Camera/Sensor for Park Assist IMPORTANT': '1',
+                'Q7d.2 Reverse Camera/Sensor for Park Assist AVAILABLE AFTERMARKET': '1',
+                'Q7e.2 Reverse Camera/Sensor for Park Assist After Market Price': '8000',
+
+                'Q7a.3 First aid kit OEM (Factory Fitted / Dealer Fitted)': '2',
+                'Q7b.3 First aid kit MOST PREFERRED': '2',
+                'Q7c.3 First aid kit IMPORTANT': '2',
+                'Q7d.3 First aid kit AVAILABLE AFTERMARKET': '1',
+                'Q7e.3 First aid kit After Market Price': '500',
+
+                // Q7f - ADAS Features Level 1 & 2 (10 simple Yes/No columns: 1=Yes, 2=No)
+                'Q7f.1 Adaptive Cruise Control': '1', // 1 = Yes
+                'Q7f.2 Lane Departure Warning': '1', // 1 = Yes
+                'Q7f.3 Lane Keep Assist': '2', // 2 = No
+                'Q7f.4 Automatic Emergency Braking (AEB)': '1', // 1 = Yes
+                'Q7f.5 Lane Centering Assist': '2', // 2 = No
+
+                // Q8 - Exterior Features (15 features × 5 columns = 75)
+                'Q8a.1 LED Headlamps OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q8b.1 LED Headlamps MOST PREFERRED': '1',
+                'Q8c.1 LED Headlamps IMPORTANT': '1',
+                'Q8d.1 LED Headlamps AVAILABLE AFTERMARKET': '1',
+                'Q8e.1 LED Headlamps After Market Price': '25000',
+
+                'Q8a.2 LED tail lamps OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q8b.2 LED tail lamps MOST PREFERRED': '1',
+                'Q8c.2 LED tail lamps IMPORTANT': '2',
+                'Q8d.2 LED tail lamps AVAILABLE AFTERMARKET': '1',
+                'Q8e.2 LED tail lamps After Market Price': '12000',
+
+                // Q9 - Interior Features (21 features × 5 columns = 105)
+                'Q9a.1 Front Dome Lamp OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q9b.1 Front Dome Lamp MOST PREFERRED': '2', // No Tick
+                'Q9c.1 Front Dome Lamp IMPORTANT': '2',
+                'Q9d.1 Front Dome Lamp AVAILABLE AFTERMARKET': '1',
+                'Q9e.1 Front Dome Lamp After Market Price': '1500',
+
+                'Q9a.2 Sliding Driver Seat OEM (Factory Fitted / Dealer Fitted)': '2',
+                'Q9b.2 Sliding Driver Seat MOST PREFERRED': '1',
+                'Q9c.2 Sliding Driver Seat IMPORTANT': '1',
+                'Q9d.2 Sliding Driver Seat AVAILABLE AFTERMARKET': '1',
+                'Q9e.2 Sliding Driver Seat After Market Price': '15000',
+
+                // Q9f - ICL Features (9 simple Yes/No columns)
+                'Q9f.1 Speedometer': '1', // Yes
+                'Q9f.2 Tachometer': '1', // Yes
+                'Q9f.3 Fuel Gauge': '1', // Yes
+                'Q9f.4 Temperature Gauge': '2', // No
+                'Q9f.5 Odometer': '1', // Yes
+
+                // Q10 - Infotainment Features (6 features × 5 columns = 30)
+                'Q10a.1 Digital TFT Cluster OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q10b.1 Digital TFT Cluster MOST PREFERRED': '1',
+                'Q10c.1 Digital TFT Cluster IMPORTANT': '1',
+                'Q10d.1 Digital TFT Cluster AVAILABLE AFTERMARKET': '2',
+                'Q10e.1 Digital TFT Cluster After Market Price': '',
+
+                'Q10a.2 Steering Music & Call Control OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q10b.2 Steering Music & Call Control MOST PREFERRED': '1',
+                'Q10c.2 Steering Music & Call Control IMPORTANT': '2',
+                'Q10d.2 Steering Music & Call Control AVAILABLE AFTERMARKET': '1',
+                'Q10e.2 Steering Music & Call Control After Market Price': '8000',
+
+                // Q11 - Connectivity Features (13 features × 5 columns = 65)
+                'Q11a.1 Bluetooth Connectivity OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q11b.1 Bluetooth Connectivity MOST PREFERRED': '1',
+                'Q11c.1 Bluetooth Connectivity IMPORTANT': '1',
+                'Q11d.1 Bluetooth Connectivity AVAILABLE AFTERMARKET': '1',
+                'Q11e.1 Bluetooth Connectivity After Market Price': '5000',
+
+                'Q11a.2 USB Connectivity OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q11b.2 USB Connectivity MOST PREFERRED': '1',
+                'Q11c.2 USB Connectivity IMPORTANT': '1',
+                'Q11d.2 USB Connectivity AVAILABLE AFTERMARKET': '1',
+                'Q11e.2 USB Connectivity After Market Price': '3000',
+
+                // Q12 - Performance Features (6 features × 5 columns = 30)
+                'Q12a.1 Hydraulic Clutch OEM (Factory Fitted / Dealer Fitted)': '1',
+                'Q12b.1 Hydraulic Clutch MOST PREFERRED': '2', // No Tick
+                'Q12c.1 Hydraulic Clutch IMPORTANT': '2',
+                'Q12d.1 Hydraulic Clutch AVAILABLE AFTERMARKET': '2',
+                'Q12e.1 Hydraulic Clutch After Market Price': '',
+
+                'Q12a.2 Turbocharger OEM (Factory Fitted / Dealer Fitted)': '2',
+                'Q12b.2 Turbocharger MOST PREFERRED': '1',
+                'Q12c.2 Turbocharger IMPORTANT': '1',
+                'Q12d.2 Turbocharger AVAILABLE AFTERMARKET': '1',
+                'Q12e.2 Turbocharger After Market Price': '50000',
+
+                // Q13 - Missing Features (20 text fields)
+                'Q13.1 Missing Features': 'Wireless Android Auto',
+                'Q13.2 Missing Features': 'Panoramic Sunroof',
+                'Q13.3 Missing Features': 'Digital Key Technology',
+                'Q13.4 Missing Features': 'Head-Up Display (HUD)',
+                'Q13.5 Missing Features': 'Massage Function Seats',
+                'Q13.6 Missing Features': 'Air Suspension',
+                'Q13.7 Missing Features': 'Night Vision Camera',
+                'Q13.8 Missing Features': 'Gesture Control',
+                'Q13.9 Missing Features': 'Facial Recognition Start',
+                'Q13.10 Missing Features': 'Autonomous Parking',
+                'Q13.11 Missing Features': '',
+                'Q13.12 Missing Features': '',
+                'Q13.13 Missing Features': '',
+                'Q13.14 Missing Features': '',
+                'Q13.15 Missing Features': '',
+                'Q13.16 Missing Features': '',
+                'Q13.17 Missing Features': '',
+                'Q13.18 Missing Features': '',
+                'Q13.19 Missing Features': '',
+                'Q13.20 Missing Features': '',
+
+                // Q14 - Other Desired Features (10 text fields)
+                'Q14.1 Other Desired Features': 'Voice Assistant in Hindi',
+                'Q14.2 Other Desired Features': 'Remote Start via Mobile App',
+                'Q14.3 Other Desired Features': 'Premium Sound System with Subwoofer',
+                'Q14.4 Other Desired Features': 'Wireless Charger for Rear Passengers',
+                'Q14.5 Other Desired Features': 'Auto-dimming Mirrors',
+                'Q14.6 Other Desired Features': '360 Degree Bird Eye View',
+                'Q14.7 Other Desired Features': 'Child Lock Override from Driver',
+                'Q14.8 Other Desired Features': '',
+                'Q14.9 Other Desired Features': '',
+                'Q14.10 Other Desired Features': ''
+            };
+        }
+
+        function createSampleFile(fileName, content, type) {
+            // Create a simple base64 encoded test file
+            const base64Content = btoa(content);
+            return {
+                name: fileName,
+                type: type,
+                data: `data:${type};base64,${base64Content}`
+            };
+        }
+
+        async function submitTestData() {
+            showStatus('📤 Submitting test survey data...', 'loading');
+            log('Creating sample survey data...');
+            
+            try {
+                const testData = createSampleData();
+                log(`Created sample data with ${Object.keys(testData).length} fields`);
+                
+                const submissionData = {
+                    action: 'submit',
+                    sheetName: 'Dealer Survey Data',
+                    data: testData,
+                    timestamp: new Date().toISOString()
+                };
+                
+                log('Submitting to Google Apps Script...');
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(submissionData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.result === 'success') {
+                    showStatus(`✅ Test submission successful! Data saved to row ${result.row}`, 'success');
+                    log(`Success! Data saved to row ${result.row}`);
+                    log('Check your Google Sheet to see the data and column structure.');
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+            } catch (error) {
+                showStatus(`❌ Submission failed: ${error.message}`, 'error');
+                log(`Submission failed: ${error.message}`);
+            }
+        }
+
+        async function submitWithFiles() {
+            showStatus('📤 Submitting test survey with file uploads...', 'loading');
+            log('Creating sample survey data with files...');
+            
+            try {
+                const testData = createSampleData();
+                
+                // Add sample files
+                testData.filledForms = [
+                    createSampleFile('filled_form_1.jpg', 'This is a sample filled form image', 'image/jpeg'),
+                    createSampleFile('customer_signature.png', 'This is a sample signature', 'image/png')
+                ];
+                
+                testData.brochures = [
+                    createSampleFile('product_brochure.pdf', 'This is a sample PDF brochure content', 'application/pdf'),
+                    createSampleFile('price_list.pdf', 'This is a sample price list PDF', 'application/pdf')
+                ];
+                
+                log(`Created sample data with ${Object.keys(testData).length} fields and ${testData.filledForms.length + testData.brochures.length} files`);
+                
+                const submissionData = {
+                    action: 'submit',
+                    sheetName: 'Dealer Survey Data',
+                    data: testData,
+                    timestamp: new Date().toISOString()
+                };
+                
+                log('Submitting to Google Apps Script with file uploads...');
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(submissionData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.result === 'success') {
+                    showStatus(`✅ Test submission with files successful! Data saved to row ${result.row}`, 'success');
+                    log(`Success! Data saved to row ${result.row}`);
+                    if (result.fileUrls) {
+                        if (result.fileUrls.filledForms) {
+                            log(`Filled forms uploaded: ${result.fileUrls.filledForms.split('\\n').length} files`);
+                        }
+                        if (result.fileUrls.brochures) {
+                            log(`Brochures uploaded: ${result.fileUrls.brochures.split('\\n').length} files`);
+                        }
+                    }
+                    log('Check your Google Sheet and Google Drive folder to see the data and uploaded files.');
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+            } catch (error) {
+                showStatus(`❌ Submission failed: ${error.message}`, 'error');
+                log(`Submission failed: ${error.message}`);
+            }
+        }
+
+        // Auto-test connection on page load
+        window.addEventListener('load', () => {
+            log('Test page loaded. Ready to test your Dealer Survey integration!');
+        });
+    </script>
+</body>
+</html>
