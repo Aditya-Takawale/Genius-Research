@@ -159,6 +159,31 @@ const SurveyForm = () => {
         submittedTime: new Date().toLocaleTimeString('en-IN')
       };
 
+      // DEBUG: Log submission data
+      console.log('=== FORM SUBMISSION DEBUG ===');
+      console.log('Total fields being submitted:', Object.keys(submissionData).length);
+      console.log('Q4 value:', submissionData.Q4_VehicleModelsDealt);
+      console.log('Q5 value:', submissionData.Q5_FeatureKnowledgeLevel);
+      
+      // Check different field types
+      console.log('\n--- Field Type Analysis ---');
+      console.log('Q6 fields (total):', Object.keys(submissionData).filter(k => k.startsWith('Q6')).length);
+      console.log('Q6a_Available:', Object.keys(submissionData).filter(k => k.startsWith('Q6a_Available')).length);
+      console.log('Q6b_MostPreferred:', Object.keys(submissionData).filter(k => k.startsWith('Q6b_MostPreferred')).length);
+      console.log('Q6c_Importance:', Object.keys(submissionData).filter(k => k.startsWith('Q6c_Importance')).length);
+      
+      console.log('\n--- Q13 Variants Check ---');
+      console.log('Q13_Checked fields:', Object.keys(submissionData).filter(k => k.startsWith('Q13_Checked')));
+      console.log('Q13a_Missing fields:', Object.keys(submissionData).filter(k => k.startsWith('Q13a_Missing')));
+      console.log('Q13b_Preferred fields:', Object.keys(submissionData).filter(k => k.startsWith('Q13b_Preferred')));
+      console.log('Q14_Other fields:', Object.keys(submissionData).filter(k => k.startsWith('Q14_Other')));
+      
+      console.log('\n--- Special Fields Check ---');
+      console.log('ADAS fields:', Object.keys(submissionData).filter(k => k.startsWith('ADAS_')));
+      console.log('ICL fields:', Object.keys(submissionData).filter(k => k.startsWith('ICL_')));
+      
+      console.log('\nFull data:', submissionData);
+
       try {
         await submitToGoogleSheets(submissionData);
         clearSurveyDraft();

@@ -42,6 +42,14 @@ function doPost(e) {
       ).setMimeType(ContentService.MimeType.JSON);
     }
     
+    if (data.action === 'recreateHeaders') {
+      // Force recreate sheet headers
+      var result = recreateSheetHeaders(data.sheetName);
+      return ContentService.createTextOutput(
+        JSON.stringify(result)
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    
     if (data.action === 'uploadFiles') {
       // Handle file uploads to Google Drive
       var result = uploadFilesToDrive(data);
@@ -81,9 +89,29 @@ function submitSurveyData(requestData) {
     
     var surveyData = requestData.data;
     
+    // DEBUG: Log received data keys
+    Logger.log('=== RECEIVED DATA KEYS ===');
+    Logger.log('Total keys received: ' + Object.keys(surveyData).length);
+    Logger.log('First 50 keys: ' + Object.keys(surveyData).slice(0, 50).join(', '));
+    
     if (!sheet) {
       sheet = ss.insertSheet(sheetName);
       createProperHeaders(sheet);
+    } else {
+      // DEBUG: Check if headers are correct
+      var existingHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+      Logger.log('=== EXISTING HEADERS CHECK ===');
+      Logger.log('Sheet has ' + existingHeaders.length + ' columns');
+      Logger.log('Expected ~670 columns for complete survey');
+      Logger.log('Header sample (cols 10-15): ' + existingHeaders.slice(10, 15).join(' | '));
+      
+      // Check if we need to recreate headers (if header count is wrong)
+      var expectedMinColumns = 650; // Approximate minimum expected
+      if (existingHeaders.length < expectedMinColumns) {
+        Logger.log('WARNING: Header count too low! Recreating headers...');
+        sheet.clear();
+        createProperHeaders(sheet);
+      }
     }
     
     // Generate sequential serial number
@@ -122,6 +150,46 @@ function submitSurveyData(requestData) {
     return {
       result: 'error',
       message: 'Error: ' + error.toString()
+    };
+  }
+}
+
+// Function to recreate sheet headers (fixes old/incomplete headers)
+function recreateSheetHeaders(sheetName) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    sheetName = sheetName || 'Dealer Survey Data';
+    var sheet = ss.getSheetByName(sheetName);
+    
+    if (!sheet) {
+      return {
+        result: 'error',
+        message: 'Sheet "' + sheetName + '" does not exist'
+      };
+    }
+    
+    // Get existing data (excluding header row)
+    var lastRow = sheet.getLastRow();
+    var existingData = [];
+    if (lastRow > 1) {
+      existingData = sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).getValues();
+    }
+    
+    // Clear sheet and recreate headers
+    sheet.clear();
+    createProperHeaders(sheet);
+    
+    // Note: Restoring data would require complex mapping. Better to delete old data.
+    return {
+      result: 'success',
+      message: 'Headers recreated successfully! ' + (existingData.length > 0 ? 'WARNING: Old data was cleared. Please resubmit surveys.' : ''),
+      newColumnCount: sheet.getLastColumn()
+    };
+    
+  } catch (error) {
+    return {
+      result: 'error',
+      message: 'Error recreating headers: ' + error.toString()
     };
   }
 }
@@ -317,9 +385,19 @@ function generateFeatureHeaders() {
     headers.push('Q12e.' + featureNum + ' ' + feature + ' After Market Price');
   });
   
-  // Q13 - Missing Features (20 text fields)
-  for (var i = 1; i <= 20; i++) {
-    headers.push('Q13.' + i + ' Missing Features');
+  // Q13 - Features Customers Check (10 text fields from Step 8)
+  for (var i = 1; i <= 10; i++) {
+    headers.push('Q13.' + i + ' Features Customers Check');
+  }
+  
+  // Q13a - Missing Features (10 text fields from Step 9)
+  for (var i = 1; i <= 10; i++) {
+    headers.push('Q13a.' + i + ' Missing Features');
+  }
+  
+  // Q13b - Preferred Features (10 text fields from Step 9)
+  for (var i = 1; i <= 10; i++) {
+    headers.push('Q13b.' + i + ' Preferred Features');
   }
   
   // Q14 - Other Desired Features (10 text fields)
@@ -380,9 +458,21 @@ function getFormFieldName(header) {
       var sectionNum = letterMatch[1];
       var letterSuffix = letterMatch[2] || '';
       
-      // Handle special sections (Q13, Q14 - text fields)
+      // Handle special sections (Q13, Q13a, Q13b, Q14 - text fields)
       if (sectionNum === '13') {
-        return 'Q13_Missing_' + featureNum;
+        // Q13 (no suffix) = Features Customers Check
+        if (letterSuffix === '') {
+          return 'Q13_Checked_' + featureNum;
+        }
+        // Q13a = Missing Features
+        if (letterSuffix === 'a') {
+          return 'Q13a_Missing_' + featureNum;
+        }
+        // Q13b = Preferred Features
+        if (letterSuffix === 'b') {
+          return 'Q13b_Preferred_' + featureNum;
+        }
+        return null;
       }
       if (sectionNum === '14') {
         return 'Q14_Other_' + featureNum;
@@ -464,7 +554,11 @@ function buildProperRow(data, timestamp, sheet) {
   var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
   var row = [];
   
-  headers.forEach(function(header) {
+  // DEBUG: Count non-empty values
+  var nonEmptyCount = 0;
+  var sampleMappings = [];
+  
+  headers.forEach(function(header, index) {
     if (header === 'Serial Number') {
       row.push(get('serialNumber'));
     } else if (header === 'Timestamp') {
@@ -482,18 +576,33 @@ function buildProperRow(data, timestamp, sheet) {
             var sectionNum = sectionMatch[1];
             var featureNum = parts[2];
             var arrayName = 'Q' + sectionNum + 'b_MostPreferred';
-            row.push(isInCheckboxArray(arrayName, featureNum));
+            var checkboxValue = isInCheckboxArray(arrayName, featureNum);
+            row.push(checkboxValue);
+            if (checkboxValue === '1') nonEmptyCount++;
           } else {
             row.push('');
           }
         } else {
-          row.push(get(formField));
+          var value = get(formField);
+          row.push(value);
+          if (value !== '') nonEmptyCount++;
+          
+          // Sample first 20 mappings for debugging
+          if (sampleMappings.length < 20 && index >= 10 && index <= 30) {
+            sampleMappings.push(header.substring(0, 30) + ' -> ' + formField + ' = ' + value);
+          }
         }
       } else {
         row.push('');
       }
     }
   });
+  
+  // DEBUG: Log results
+  Logger.log('=== ROW BUILDING RESULTS ===');
+  Logger.log('Total columns: ' + row.length);
+  Logger.log('Non-empty values: ' + nonEmptyCount);
+  Logger.log('Sample mappings: ' + sampleMappings.join(' | '));
   
   return row;
 }
@@ -652,4 +761,4 @@ function testDriveFolder(folderId) {
       error: 'Invalid Folder ID or no access. Error: ' + error.toString()
     };
   }
-}
+}                   

@@ -124,16 +124,41 @@ export function generateTestFormData() {
   testData.Q12b_MostPreferred = ['1', '2', '4'];
 
   // ============ SECTION I: Q13 & Q14 - Open-ended Feedback ============
-  testData.Q13_Missing_1 = 'Heated Steering Wheel';
-  testData.Q13_Missing_2 = 'Heads-up Display';
-  testData.Q13_Missing_3 = 'Massage Seats';
-  testData.Q13_Missing_4 = '';
-  testData.Q13_Missing_5 = '';
-  testData.Q13_Missing_6 = '';
-  testData.Q13_Missing_7 = '';
-  testData.Q13_Missing_8 = '';
-  testData.Q13_Missing_9 = '';
-  testData.Q13_Missing_10 = '';
+  // Q13 - Features Customers Check (10 fields from Step 8)
+  testData.Q13_Checked_1 = 'Airbags';
+  testData.Q13_Checked_2 = 'Touchscreen';
+  testData.Q13_Checked_3 = 'Mileage';
+  testData.Q13_Checked_4 = '';
+  testData.Q13_Checked_5 = '';
+  testData.Q13_Checked_6 = '';
+  testData.Q13_Checked_7 = '';
+  testData.Q13_Checked_8 = '';
+  testData.Q13_Checked_9 = '';
+  testData.Q13_Checked_10 = '';
+  
+  // Q13a - Missing Features (10 fields from Step 9)
+  testData.Q13a_Missing_1 = 'Heated Steering Wheel';
+  testData.Q13a_Missing_2 = 'Heads-up Display';
+  testData.Q13a_Missing_3 = 'Massage Seats';
+  testData.Q13a_Missing_4 = '';
+  testData.Q13a_Missing_5 = '';
+  testData.Q13a_Missing_6 = '';
+  testData.Q13a_Missing_7 = '';
+  testData.Q13a_Missing_8 = '';
+  testData.Q13a_Missing_9 = '';
+  testData.Q13a_Missing_10 = '';
+
+  // Q13b - Preferred Features (10 fields from Step 9)
+  testData.Q13b_Preferred_1 = 'Better Sound System';
+  testData.Q13b_Preferred_2 = 'Larger Touchscreen';
+  testData.Q13b_Preferred_3 = 'More USB Ports';
+  testData.Q13b_Preferred_4 = '';
+  testData.Q13b_Preferred_5 = '';
+  testData.Q13b_Preferred_6 = '';
+  testData.Q13b_Preferred_7 = '';
+  testData.Q13b_Preferred_8 = '';
+  testData.Q13b_Preferred_9 = '';
+  testData.Q13b_Preferred_10 = '';
 
   testData.Q14_Other_1 = 'Gesture Control';
   testData.Q14_Other_2 = 'Night Vision Camera';
@@ -270,16 +295,41 @@ export function generateDeterministicTestData() {
   testData.Q12b_MostPreferred = ['1', '2', '4'];
 
   // ============ SECTION I: Q13 & Q14 - Open-ended Feedback ============
-  testData.Q13_Missing_1 = 'Heated Steering Wheel';
-  testData.Q13_Missing_2 = 'Heads-up Display';
-  testData.Q13_Missing_3 = 'Massage Seats';
-  testData.Q13_Missing_4 = 'Adaptive Suspension';
-  testData.Q13_Missing_5 = '';
-  testData.Q13_Missing_6 = '';
-  testData.Q13_Missing_7 = '';
-  testData.Q13_Missing_8 = '';
-  testData.Q13_Missing_9 = '';
-  testData.Q13_Missing_10 = '';
+  // Q13 - Features Customers Check (10 fields from Step 8)
+  testData.Q13_Checked_1 = 'Airbags';
+  testData.Q13_Checked_2 = 'Touchscreen';
+  testData.Q13_Checked_3 = 'Mileage';
+  testData.Q13_Checked_4 = 'Boot Space';
+  testData.Q13_Checked_5 = '';
+  testData.Q13_Checked_6 = '';
+  testData.Q13_Checked_7 = '';
+  testData.Q13_Checked_8 = '';
+  testData.Q13_Checked_9 = '';
+  testData.Q13_Checked_10 = '';
+  
+  // Q13a - Missing Features (10 fields from Step 9)
+  testData.Q13a_Missing_1 = 'Heated Steering Wheel';
+  testData.Q13a_Missing_2 = 'Heads-up Display';
+  testData.Q13a_Missing_3 = 'Massage Seats';
+  testData.Q13a_Missing_4 = 'Adaptive Suspension';
+  testData.Q13a_Missing_5 = '';
+  testData.Q13a_Missing_6 = '';
+  testData.Q13a_Missing_7 = '';
+  testData.Q13a_Missing_8 = '';
+  testData.Q13a_Missing_9 = '';
+  testData.Q13a_Missing_10 = '';
+
+  // Q13b - Preferred Features (10 fields from Step 9)
+  testData.Q13b_Preferred_1 = 'Better Sound System';
+  testData.Q13b_Preferred_2 = 'Larger Touchscreen';
+  testData.Q13b_Preferred_3 = 'More USB Ports';
+  testData.Q13b_Preferred_4 = 'Wireless Charging';
+  testData.Q13b_Preferred_5 = '';
+  testData.Q13b_Preferred_6 = '';
+  testData.Q13b_Preferred_7 = '';
+  testData.Q13b_Preferred_8 = '';
+  testData.Q13b_Preferred_9 = '';
+  testData.Q13b_Preferred_10 = '';
 
   testData.Q14_Other_1 = 'Gesture Control';
   testData.Q14_Other_2 = 'Night Vision Camera';

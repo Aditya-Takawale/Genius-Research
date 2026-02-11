@@ -473,7 +473,7 @@ export default function Step1_DealerProfile({ register, errors }) {
                 <td className="border border-gray-300 px-3 py-2 text-sm">Tata Signa 1923.K</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">1</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="1" {...register('Q4_ModelExperience', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="1" {...register('Q4_VehicleModelsDealt', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
                 <td className="border border-gray-300 px-3 py-2 text-center bg-blue-50 font-medium" rowSpan="7">
                   CONTINUE ONLY IF<br />PARTICIPANT HAS BEEN<br />DEALING WITH THE<br />PARTICULAR MODEL<br />VARIANT
@@ -483,49 +483,49 @@ export default function Step1_DealerProfile({ register, errors }) {
                 <td className="border border-gray-300 px-3 py-2 text-sm">Mahindra Supro Profittruck Maxi</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">2</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="2" {...register('Q4_ModelExperience', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="2" {...register('Q4_VehicleModelsDealt', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
               </tr>
               <tr>
                 <td className="border border-gray-300 px-3 py-2 text-sm">MSIL Super Carry</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">3</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="3" {...register('Q4_ModelExperience', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="3" {...register('Q4_VehicleModelsDealt', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
               </tr>
               <tr>
                 <td className="border border-gray-300 px-3 py-2 text-sm">Tata Curvv Accomplished + A</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">4</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="4" {...register('Q4_ModelExperience', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="4" {...register('Q4_VehicleModelsDealt', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
               </tr>
               <tr>
                 <td className="border border-gray-300 px-3 py-2 text-sm">MSIL Dzire ZXi</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">5</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="5" {...register('Q4_ModelExperience', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="5" {...register('Q4_VehicleModelsDealt', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
               </tr>
               <tr>
                 <td className="border border-gray-300 px-3 py-2 text-sm">TVS King EV Max</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">6</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="6" {...register('Q4_ModelExperience', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="6" {...register('Q4_VehicleModelsDealt', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
               </tr>
               <tr>
                 <td className="border border-gray-300 px-3 py-2 text-sm">TVS Ntorq 150 TFT</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">7</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="7" {...register('Q4_ModelExperience', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="7" {...register('Q4_VehicleModelsDealt', { required: 'Please select a model variant' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        {errors.Q4_ModelExperience && (
-          <p className="mt-2 text-sm text-red-600">{errors.Q4_ModelExperience.message}</p>
+        {errors.Q4_VehicleModelsDealt && (
+          <p className="mt-2 text-sm text-red-600">{errors.Q4_VehicleModelsDealt.message}</p>
         )}
       </div>
 
@@ -553,7 +553,7 @@ export default function Step1_DealerProfile({ register, errors }) {
                 <td className="border border-gray-300 px-3 py-2 text-sm">YES, Fully Equipped</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">1</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="1" {...register('Q5_KnowledgeLevel', { required: 'Please select your knowledge level' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="1" {...register('Q5_FeatureKnowledgeLevel', { required: 'Please select your knowledge level' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
                 <td className="border border-gray-300 px-3 py-2 text-center bg-green-50 font-medium">CONTINUE</td>
               </tr>
@@ -561,7 +561,7 @@ export default function Step1_DealerProfile({ register, errors }) {
                 <td className="border border-gray-300 px-3 py-2 text-sm">YES, But Partially Knowledgeable</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">2</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="2" {...register('Q5_KnowledgeLevel', { required: 'Please select your knowledge level' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="2" {...register('Q5_FeatureKnowledgeLevel', { required: 'Please select your knowledge level' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
                 <td className="border border-gray-300 px-3 py-2 text-center bg-red-50 font-medium">THANK &amp; TERMINATE</td>
               </tr>
@@ -569,7 +569,7 @@ export default function Step1_DealerProfile({ register, errors }) {
                 <td className="border border-gray-300 px-3 py-2 text-sm">I can't say for sure</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">3</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="3" {...register('Q5_KnowledgeLevel', { required: 'Please select your knowledge level' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="3" {...register('Q5_FeatureKnowledgeLevel', { required: 'Please select your knowledge level' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
                 <td className="border border-gray-300 px-3 py-2 text-center bg-red-50 font-medium">THANK &amp; TERMINATE</td>
               </tr>
@@ -577,15 +577,15 @@ export default function Step1_DealerProfile({ register, errors }) {
                 <td className="border border-gray-300 px-3 py-2 text-sm">No, I am not equipped so well</td>
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium">4</td>
                 <td className="border border-gray-300 px-3 py-2 text-center">
-                  <input type="radio" value="4" {...register('Q5_KnowledgeLevel', { required: 'Please select your knowledge level' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
+                  <input type="radio" value="4" {...register('Q5_FeatureKnowledgeLevel', { required: 'Please select your knowledge level' })} className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500" />
                 </td>
                 <td className="border border-gray-300 px-3 py-2 text-center bg-red-50 font-medium">THANK &amp; TERMINATE</td>
               </tr>
             </tbody>
           </table>
         </div>
-        {errors.Q5_KnowledgeLevel && (
-          <p className="mt-2 text-sm text-red-600">{errors.Q5_KnowledgeLevel.message}</p>
+        {errors.Q5_FeatureKnowledgeLevel && (
+          <p className="mt-2 text-sm text-red-600">{errors.Q5_FeatureKnowledgeLevel.message}</p>
         )}
       </div>
 

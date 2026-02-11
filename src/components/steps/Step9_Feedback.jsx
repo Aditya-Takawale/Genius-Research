@@ -63,11 +63,11 @@ const Step9_Feedback = ({ register, errors, setValue }) => {
   };
   return (
     <div className="bg-white p-6">
-      {/* Q13 Continuation - Second Part (from page 12) */}
+      {/* Q13a - Missing Features */}
       <div className="border-2 border-gray-400 p-4 bg-gray-50 mb-8">
         <div className="mb-4">
           <p className="text-sm text-blue-700 font-semibold">
-            Q13. According to customer demands & your experience, which features are missing in this particular model?
+            Q13a. According to customer demands & your experience, which features are <span className="font-bold">MISSING</span> in this particular model?
             <br />
             (Keep Open end box to write)
           </p>
@@ -80,9 +80,35 @@ const Step9_Feedback = ({ register, errors, setValue }) => {
               <label className="text-sm font-medium w-8">{num}.</label>
               <input
                 type="text"
-                {...register(`Q13_Missing_${num}`)}
+                {...register(`Q13a_Missing_${num}`)}
                 className="flex-1 px-3 py-2 border-2 border-gray-400 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder=""
+                placeholder="Missing feature"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Q13b - Preferred Features */}
+      <div className="border-2 border-gray-400 p-4 bg-gray-50 mb-8">
+        <div className="mb-4">
+          <p className="text-sm text-blue-700 font-semibold">
+            Q13b. According to customer demands & your experience, which features are <span className="font-bold">PREFERRED / DESIRED / DEMANDED</span> by customers for this particular model?
+            <br />
+            (Keep Open end box to write)
+          </p>
+        </div>
+
+        {/* 10 Input Fields in 2 Columns */}
+        <div className="grid grid-cols-2 gap-4">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+            <div key={num} className="flex items-center gap-2">
+              <label className="text-sm font-medium w-8">{num}.</label>
+              <input
+                type="text"
+                {...register(`Q13b_Preferred_${num}`)}
+                className="flex-1 px-3 py-2 border-2 border-gray-400 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Preferred feature"
               />
             </div>
           ))}
