@@ -172,8 +172,7 @@ const SurveyForm = () => {
       console.log('Q6b_MostPreferred:', Object.keys(submissionData).filter(k => k.startsWith('Q6b_MostPreferred')).length);
       console.log('Q6c_Importance:', Object.keys(submissionData).filter(k => k.startsWith('Q6c_Importance')).length);
       
-      console.log('\n--- Q13 Variants Check ---');
-      console.log('Q13_Checked fields:', Object.keys(submissionData).filter(k => k.startsWith('Q13_Checked')));
+      console.log('\n--- Q13a, Q13b, Q14 Fields Check ---');
       console.log('Q13a_Missing fields:', Object.keys(submissionData).filter(k => k.startsWith('Q13a_Missing')));
       console.log('Q13b_Preferred fields:', Object.keys(submissionData).filter(k => k.startsWith('Q13b_Preferred')));
       console.log('Q14_Other fields:', Object.keys(submissionData).filter(k => k.startsWith('Q14_Other')));

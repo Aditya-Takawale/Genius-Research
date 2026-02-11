@@ -8,17 +8,17 @@ export function generateTestFormData() {
   testData.Q1A_City = '1'; // Pune
   testData.Q1B_OEM = '2'; // Tata Motors (Passenger Vehicle)
   testData.Q1C_Model = '4'; // Tata Curvv
-  testData.S1_1_DealerName = 'Test Dealer Pvt Ltd';
-  testData.S1_2_DealerAddress = '123 Test Street, Test Area';
+  testData.S1_1_DealerName = 'Velocity Auto Sales Pvt Ltd';
+  testData.S1_2_DealerAddress = '789 MG Road, Kothrud';
   testData.S1_3_DistrictName = 'Pune';
   testData.S1_4_StateName = 'Maharashtra';
-  testData.S1_5_RespondentName = 'Test Respondent';
-  testData.S1_6_RespondentContact = '9876543210';
-  testData.Q1C_Gender = '1'; // Male
-  testData.Q2_Experience = '5'; // 5 years
-  testData.Q3_Designation = 'Senior Sales Manager'; // Text field
-  testData.Q4_VehicleModelsDealt = '3'; // 3 models
-  testData.Q5_FeatureKnowledgeLevel = '4'; // Very Good
+  testData.S1_5_RespondentName = 'Priya Sharma';
+  testData.S1_6_RespondentContact = '9123456789';
+  testData.Q1C_Gender = '2'; // Female
+  testData.Q2_Experience = '7'; // 7 years
+  testData.Q3_Designation = 'Sales Team Lead'; // Text field
+  testData.Q4_VehicleModelsDealt = '5'; // 5 models
+  testData.Q5_FeatureKnowledgeLevel = '5'; // Excellent
 
   // ============ SECTION B: Q6 - Comfort Features (37 features) ============
   for (let i = 1; i <= 37; i++) {
@@ -123,25 +123,13 @@ export function generateTestFormData() {
   }
   testData.Q12b_MostPreferred = ['1', '2', '4'];
 
-  // ============ SECTION I: Q13 & Q14 - Open-ended Feedback ============
-  // Q13 - Features Customers Check (10 fields from Step 8)
-  testData.Q13_Checked_1 = 'Airbags';
-  testData.Q13_Checked_2 = 'Touchscreen';
-  testData.Q13_Checked_3 = 'Mileage';
-  testData.Q13_Checked_4 = '';
-  testData.Q13_Checked_5 = '';
-  testData.Q13_Checked_6 = '';
-  testData.Q13_Checked_7 = '';
-  testData.Q13_Checked_8 = '';
-  testData.Q13_Checked_9 = '';
-  testData.Q13_Checked_10 = '';
-  
+  // ============ SECTION I: Q13a, Q13b & Q14 - Open-ended Feedback ============
   // Q13a - Missing Features (10 fields from Step 9)
-  testData.Q13a_Missing_1 = 'Heated Steering Wheel';
-  testData.Q13a_Missing_2 = 'Heads-up Display';
-  testData.Q13a_Missing_3 = 'Massage Seats';
-  testData.Q13a_Missing_4 = '';
-  testData.Q13a_Missing_5 = '';
+  testData.Q13a_Missing_1 = 'Wireless Android Auto & Apple CarPlay';
+  testData.Q13a_Missing_2 = 'Panoramic Sunroof';
+  testData.Q13a_Missing_3 = 'Powered Driver Seat with Memory';
+  testData.Q13a_Missing_4 = '360 Degree Camera System';
+  testData.Q13a_Missing_5 = 'Digital Key Technology';
   testData.Q13a_Missing_6 = '';
   testData.Q13a_Missing_7 = '';
   testData.Q13a_Missing_8 = '';
@@ -149,21 +137,22 @@ export function generateTestFormData() {
   testData.Q13a_Missing_10 = '';
 
   // Q13b - Preferred Features (10 fields from Step 9)
-  testData.Q13b_Preferred_1 = 'Better Sound System';
-  testData.Q13b_Preferred_2 = 'Larger Touchscreen';
-  testData.Q13b_Preferred_3 = 'More USB Ports';
-  testData.Q13b_Preferred_4 = '';
-  testData.Q13b_Preferred_5 = '';
-  testData.Q13b_Preferred_6 = '';
+  testData.Q13b_Preferred_1 = 'Premium JBL Sound System';
+  testData.Q13b_Preferred_2 = '12.3 inch Touchscreen Display';
+  testData.Q13b_Preferred_3 = 'Wireless Charging Pad';
+  testData.Q13b_Preferred_4 = 'Ventilated Front Seats';
+  testData.Q13b_Preferred_5 = 'Auto-Dimming IRVM';
+  testData.Q13b_Preferred_6 = 'Ambient Lighting (Multi-Color)';
   testData.Q13b_Preferred_7 = '';
   testData.Q13b_Preferred_8 = '';
   testData.Q13b_Preferred_9 = '';
   testData.Q13b_Preferred_10 = '';
 
-  testData.Q14_Other_1 = 'Gesture Control';
-  testData.Q14_Other_2 = 'Night Vision Camera';
-  testData.Q14_Other_3 = '';
-  testData.Q14_Other_4 = '';
+  // Q14 - Other Desired Features (10 fields from Step 9)
+  testData.Q14_Other_1 = 'Over-the-Air (OTA) Software Updates';
+  testData.Q14_Other_2 = 'Gesture Control for Infotainment';
+  testData.Q14_Other_3 = 'Head-Up Display (HUD)';
+  testData.Q14_Other_4 = 'Air Purifier with AQI Display';
   testData.Q14_Other_5 = '';
   testData.Q14_Other_6 = '';
   testData.Q14_Other_7 = '';
@@ -182,16 +171,16 @@ export function generateDeterministicTestData() {
   testData.Q1A_City = '1';
   testData.Q1B_OEM = '2';
   testData.Q1C_Model = '4';
-  testData.S1_1_DealerName = 'ABC Motors Pvt Ltd';
-  testData.S1_2_DealerAddress = '456 Main Road, Kothrud';
+  testData.S1_1_DealerName = 'Elite Motors & Services Ltd';
+  testData.S1_2_DealerAddress = '321 Baner Road, Aundh';
   testData.S1_3_DistrictName = 'Pune';
   testData.S1_4_StateName = 'Maharashtra';
-  testData.S1_5_RespondentName = 'Rajesh Kumar';
-  testData.S1_6_RespondentContact = '9876543210';
-  testData.Q1C_Gender = '1';
-  testData.Q2_Experience = '8';
+  testData.S1_5_RespondentName = 'Neha Deshmukh';
+  testData.S1_6_RespondentContact = '9191919191';
+  testData.Q1C_Gender = '2';
+  testData.Q2_Experience = '12';
   testData.Q3_Designation = '1';
-  testData.Q4_VehicleModelsDealt = '5';
+  testData.Q4_VehicleModelsDealt = '8';
   testData.Q5_FeatureKnowledgeLevel = '5';
 
   // ============ SECTION B: Q6 - Comfort Features (37 features) ============
@@ -294,48 +283,37 @@ export function generateDeterministicTestData() {
   }
   testData.Q12b_MostPreferred = ['1', '2', '4'];
 
-  // ============ SECTION I: Q13 & Q14 - Open-ended Feedback ============
-  // Q13 - Features Customers Check (10 fields from Step 8)
-  testData.Q13_Checked_1 = 'Airbags';
-  testData.Q13_Checked_2 = 'Touchscreen';
-  testData.Q13_Checked_3 = 'Mileage';
-  testData.Q13_Checked_4 = 'Boot Space';
-  testData.Q13_Checked_5 = '';
-  testData.Q13_Checked_6 = '';
-  testData.Q13_Checked_7 = '';
-  testData.Q13_Checked_8 = '';
-  testData.Q13_Checked_9 = '';
-  testData.Q13_Checked_10 = '';
-  
+  // ============ SECTION I: Q13a, Q13b & Q14 - Open-ended Feedback ============
   // Q13a - Missing Features (10 fields from Step 9)
-  testData.Q13a_Missing_1 = 'Heated Steering Wheel';
-  testData.Q13a_Missing_2 = 'Heads-up Display';
-  testData.Q13a_Missing_3 = 'Massage Seats';
-  testData.Q13a_Missing_4 = 'Adaptive Suspension';
-  testData.Q13a_Missing_5 = '';
-  testData.Q13a_Missing_6 = '';
+  testData.Q13a_Missing_1 = 'Electrically Adjustable Steering Column';
+  testData.Q13a_Missing_2 = 'Cooled Glovebox';
+  testData.Q13a_Missing_3 = 'Rear Sunshade';
+  testData.Q13a_Missing_4 = 'Foot Sensor for Boot Opening';
+  testData.Q13a_Missing_5 = 'Blind Spot Monitoring';
+  testData.Q13a_Missing_6 = 'Lane Change Assist';
   testData.Q13a_Missing_7 = '';
   testData.Q13a_Missing_8 = '';
   testData.Q13a_Missing_9 = '';
   testData.Q13a_Missing_10 = '';
 
   // Q13b - Preferred Features (10 fields from Step 9)
-  testData.Q13b_Preferred_1 = 'Better Sound System';
-  testData.Q13b_Preferred_2 = 'Larger Touchscreen';
-  testData.Q13b_Preferred_3 = 'More USB Ports';
-  testData.Q13b_Preferred_4 = 'Wireless Charging';
-  testData.Q13b_Preferred_5 = '';
-  testData.Q13b_Preferred_6 = '';
-  testData.Q13b_Preferred_7 = '';
+  testData.Q13b_Preferred_1 = 'Improved Fuel Economy Display';
+  testData.Q13b_Preferred_2 = '10.25 inch Digital Instrument Cluster';
+  testData.Q13b_Preferred_3 = 'Rear AC Vents with Separate Controls';
+  testData.Q13b_Preferred_4 = 'Leather-Wrapped Gear Knob';
+  testData.Q13b_Preferred_5 = 'Auto-Hold Function in Brakes';
+  testData.Q13b_Preferred_6 = 'Rain Sensing Wipers';
+  testData.Q13b_Preferred_7 = 'Dual-Zone Climate Control';
   testData.Q13b_Preferred_8 = '';
   testData.Q13b_Preferred_9 = '';
   testData.Q13b_Preferred_10 = '';
 
-  testData.Q14_Other_1 = 'Gesture Control';
-  testData.Q14_Other_2 = 'Night Vision Camera';
-  testData.Q14_Other_3 = 'Self Parking System';
-  testData.Q14_Other_4 = '';
-  testData.Q14_Other_5 = '';
+  // Q14 - Other Desired Features (10 fields from Step 9)
+  testData.Q14_Other_1 = 'Better Ground Clearance (200mm+)';
+  testData.Q14_Other_2 = 'Larger Boot Space (400L+)';
+  testData.Q14_Other_3 = 'More Color Options';
+  testData.Q14_Other_4 = 'Better After-Sales Service';
+  testData.Q14_Other_5 = 'Faster Charging for EV Variants';
   testData.Q14_Other_6 = '';
   testData.Q14_Other_7 = '';
   testData.Q14_Other_8 = '';

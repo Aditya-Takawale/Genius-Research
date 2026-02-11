@@ -272,32 +272,6 @@ const Step8_Performance = ({ register, errors }) => {
           </tbody>
         </table>
       </div>
-
-      {/* Q13: Open-ended Question */}
-      <div className="mt-8 border-2 border-gray-400 p-4 bg-gray-50">
-        <div className="mb-4">
-          <p className="text-sm text-blue-700 font-semibold">
-            Q13. When customer comes for enquiry of __________ (model name) what all features they mostly check in the vehicle.
-            <br />
-            (For scripting - Keep Open end box to write)
-          </p>
-        </div>
-
-        {/* 10 Input Fields in 2 Columns */}
-        <div className="grid grid-cols-2 gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-            <div key={num} className="flex items-center gap-2">
-              <label className="text-sm font-medium w-8">{num}.</label>
-              <input
-                type="text"
-                {...register(`Q13_Checked_${num}`)}
-                className="flex-1 px-3 py-2 border-2 border-gray-400 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder=""
-              />
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };

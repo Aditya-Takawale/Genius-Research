@@ -385,11 +385,6 @@ function generateFeatureHeaders() {
     headers.push('Q12e.' + featureNum + ' ' + feature + ' After Market Price');
   });
   
-  // Q13 - Features Customers Check (10 text fields from Step 8)
-  for (var i = 1; i <= 10; i++) {
-    headers.push('Q13.' + i + ' Features Customers Check');
-  }
-  
   // Q13a - Missing Features (10 text fields from Step 9)
   for (var i = 1; i <= 10; i++) {
     headers.push('Q13a.' + i + ' Missing Features');
@@ -443,7 +438,8 @@ function getFormFieldName(header) {
   // Q6e.1 ... After Market Price -> Q6e_Price_1
   // Q7f.1 Adaptive Cruise Control -> ADAS_ACC (uses feature.code)
   // Q9f.1 Speedometer -> ICL_Speedo (uses feature.code)
-  // Q13.1 Missing Features -> Q13_Missing_1
+  // Q13a.1 Missing Features -> Q13a_Missing_1
+  // Q13b.1 Preferred Features -> Q13b_Preferred_1
   // Q14.1 Other Desired Features -> Q14_Other_1
   
   // Match patterns like Q6a.1, Q7b.12, Q10c.3, etc.
@@ -458,12 +454,8 @@ function getFormFieldName(header) {
       var sectionNum = letterMatch[1];
       var letterSuffix = letterMatch[2] || '';
       
-      // Handle special sections (Q13, Q13a, Q13b, Q14 - text fields)
+      // Handle special sections (Q13a, Q13b, Q14 - text fields)
       if (sectionNum === '13') {
-        // Q13 (no suffix) = Features Customers Check
-        if (letterSuffix === '') {
-          return 'Q13_Checked_' + featureNum;
-        }
         // Q13a = Missing Features
         if (letterSuffix === 'a') {
           return 'Q13a_Missing_' + featureNum;
